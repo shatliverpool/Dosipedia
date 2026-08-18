@@ -3,7 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DosiPedia - โรงพยาบาลสงขลา</title>
+  <title>DosiPedia - Pediatric Dosage Calculator</title>
+
+  <!-- 📱 PWA Meta Tags & Icons -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ec4899">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <!-- 🍎 สำหรับ iOS / Safari (iPhone, iPad) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DosiPedia">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -28,6 +41,17 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
   <div id="root"></div>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Service Worker Registered!', reg))
+          .catch(err => console.error('Service Worker Registration Failed!', err));
+      });
+    }
+  </script>
 
   <script type="text/babel">
     const { useState, useEffect, useMemo, useRef } = React;
@@ -309,14 +333,16 @@
           if (pdoMin > 0) {
             const rateMlHr = (((pdoMin / 1000) * pw) / conc) * 60;
             const mcgMin = (rateMlHr * conc * 1000) / 60;
-            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/min' };
+            const mcgHr = rateMlHr * conc * 1000;
+            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/min' };
           } else if (pdoHr > 0) {
             const rateMlHr = ((pdoHr / 1000) * pw) / conc;
             const mcgMin = (rateMlHr * conc * 1000) / 60;
-            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/hr' };
+            const mcgHr = rateMlHr * conc * 1000;
+            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/hr' };
           }
         }
-        return { mlHr: "0.00", mcgMin: "0.00", activeUnit: '' };
+        return { mlHr: "0.00", mcgMin: "0.00", mcgHr: "0.00", activeUnit: '' };
       }, [s2, weight, calculatedConcS2]);
 
       const s3Res = useMemo(() => {
@@ -328,16 +354,19 @@
           if (pdoMin > 0) {
             const conc = ((pw * pdoMin * 60) / (1000 * pr));
             const mcgMin = (pr * conc * 1000) / 60;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/min' };
+            const mcgHr = pr * conc * 1000;
+            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/min' };
           } else if (pdoHr > 0) {
             const conc = ((pw * pdoHr) / (1000 * pr));
             const mcgMin = (pr * conc * 1000) / 60;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/hr' };
+            const mcgHr = pr * conc * 1000;
+            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/hr' };
           }
         }
-        return { conc: "0.00", mcgMin: "0.00", activeUnit: '' };
+        return { conc: "0.00", mcgMin: "0.00", mcgHr: "0.00", activeUnit: '' };
       }, [s3, weight]);
 
+      // ⏱️ ปรับเวลาค้างข้อมูลเป็น 10 วินาที
       useEffect(() => {
         const pw = parseFloat(weight);
         if (weightTimerRef.current) clearTimeout(weightTimerRef.current);
@@ -360,7 +389,7 @@
                 details: logMsg
               });
             }
-          }, 5000);
+          }, 10000);
         }
 
         return () => {
@@ -377,7 +406,7 @@
 
         if (pd > 0 && ps > 0 && pw > 0 && (pdoMin > 0 || pdoHr > 0)) {
           const activeDose = pdoMin > 0 ? `${pdoMin} mcg/kg/min` : `${pdoHr} mcg/kg/hr`;
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Drug:${pd}mg, Sol:${ps}ml, Dose:${activeDose}, Wt:${pw}kg => Rate:${s2Res.mlHr} ml/hr (${s2Res.mcgMin} mcg/min), Conc:${calculatedConcS2} mg/ml`;
+          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Drug:${pd}mg, Sol:${ps}ml, Dose:${activeDose}, Wt:${pw}kg => Rate:${s2Res.mlHr} ml/hr (${s2Res.mcgMin} mcg/min, ${s2Res.mcgHr} mcg/hr), Conc:${calculatedConcS2} mg/ml`;
           
           s2TimerRef.current = setTimeout(() => {
             if (lastSentS2.current !== logMsg) {
@@ -391,7 +420,7 @@
                 details: logMsg
               });
             }
-          }, 5000);
+          }, 10000);
         }
 
         return () => {
@@ -408,7 +437,7 @@
 
         if (pr > 0 && pw > 0 && (pdoMin > 0 || pdoHr > 0)) {
           const activeDose = pdoMin > 0 ? `${pdoMin} mcg/kg/min` : `${pdoHr} mcg/kg/hr`;
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Rate:${pr}ml/hr, Dose:${activeDose}, Wt:${pw}kg => Conc:${s3Res.conc} mg/ml (${s3Res.mcgMin} mcg/min)`;
+          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Rate:${pr}ml/hr, Dose:${activeDose}, Wt:${pw}kg => Conc:${s3Res.conc} mg/ml (${s3Res.mcgMin} mcg/min, ${s3Res.mcgHr} mcg/hr)`;
           
           s3TimerRef.current = setTimeout(() => {
             if (lastSentS3.current !== logMsg) {
@@ -422,7 +451,7 @@
                 details: logMsg
               });
             }
-          }, 5000);
+          }, 10000);
         }
 
         return () => {
@@ -465,7 +494,7 @@
                 <img src={LOGO_URL} className="w-28 h-28 object-contain" alt="Logo" />
               </div>
               <h1 className="text-3xl font-extrabold mb-2 text-slate-800 tracking-tight">เข้าสู่ระบบ DosiPedia</h1>
-              <p className="text-sm text-slate-400 mb-6 font-semibold">โรงพยาบาลสงขลา (Songkhla Hospital)</p>
+              <p className="text-sm text-slate-400 mb-6 font-semibold">PEDIATRIC DOSAGE CALCULATOR</p>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
                   <input 
@@ -501,9 +530,6 @@
               <div>
                 <h1 className="text-lg md:text-xl font-extrabold text-slate-800 tracking-tighter flex items-center gap-2">
                   DosiPedia
-                  <span className="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                    รพ.สงขลา
-                  </span>
                 </h1>
                 <p className="text-[10px] text-slate-400 font-bold hidden md:block">PEDIATRIC DOSAGE CALCULATOR</p>
               </div>
@@ -673,6 +699,7 @@
                 </div>
 
                 <div className="space-y-6">
+                  {/* 2. คำนวณหาอัตราการไหล (Rate) */}
                   <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-100">
                     <div className="bg-blue-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider flex justify-between items-center">
                       <span>2. คำนวณหาอัตราการไหล (Rate - ml/hr)</span>
@@ -707,17 +734,15 @@
                         </div>
                       </div>
 
+                      {/* ⚡ Auto-clear ระหว่างช่อง dose / doseHr */}
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
                           <label className="text-[10px] font-extrabold text-blue-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/min)</label>
                           <input 
                             type="number" 
                             value={s2.dose} 
-                            onChange={e=>setS2({...s2, dose:e.target.value, doseHr:''})} 
-                            disabled={s2.doseHr !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s2.doseHr !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-blue-50 border-blue-200 text-blue-700 focus:border-blue-500 focus:bg-white outline-none'
-                            }`}
+                            onChange={e => setS2({ ...s2, dose: e.target.value, doseHr: '' })} 
+                            className="w-full p-3 border rounded-xl text-center font-black bg-blue-50 border-blue-200 text-blue-700 focus:border-blue-500 focus:bg-white outline-none"
                             placeholder="กรอกช่องนี้"
                           />
                         </div>
@@ -726,29 +751,29 @@
                           <input 
                             type="number" 
                             value={s2.doseHr} 
-                            onChange={e=>setS2({...s2, doseHr:e.target.value, dose:''})} 
-                            disabled={s2.dose !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s2.dose !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-indigo-50 border-indigo-200 text-indigo-700 focus:border-indigo-500 focus:bg-white outline-none'
-                            }`}
+                            onChange={e => setS2({ ...s2, doseHr: e.target.value, dose: '' })} 
+                            className="w-full p-3 border rounded-xl text-center font-black bg-indigo-50 border-indigo-200 text-indigo-700 focus:border-indigo-500 focus:bg-white outline-none"
                             placeholder="หรือช่องนี้"
                           />
                         </div>
                       </div>
 
-                      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-2 shadow-lg">
+                      {/* 💡 เพิ่มการแสดงผลทั้ง mcg/min และ mcg/hr */}
+                      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-3 shadow-lg">
                         <div className="flex flex-col">
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ความเร็ว Infusion Pump:</span>
                           <span className="text-3xl font-black">{s2Res.mlHr} <span className="text-xs font-bold opacity-80">ml/hr</span></span>
                         </div>
-                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดไมโครกรัม:</span>
-                          <span className="text-2xl font-black text-blue-200">{s2Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
+                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5">
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดอัตรา:</span>
+                          <span className="text-lg font-black text-blue-100">{s2Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
+                          <span className="text-lg font-black text-indigo-200">{s2Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
                         </div>
                       </div>
                     </div>
                   </div>
 
+                  {/* 3. คำนวณหาความเข้มข้นของยา (Conc) */}
                   <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-200">
                     <div className="bg-emerald-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider">
                       3. คำนวณหาความเข้มข้นของยา (Conc. - mg/ml)
@@ -766,17 +791,15 @@
                         />
                       </div>
 
+                      {/* ⚡ Auto-clear ระหว่างช่อง dose / doseHr */}
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
                           <label className="text-[10px] font-extrabold text-emerald-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/min)</label>
                           <input 
                             type="number" 
                             value={s3.dose} 
-                            onChange={e=>setS3({...s3, dose:e.target.value, doseHr:''})} 
-                            disabled={s3.doseHr !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s3.doseHr !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700 focus:border-emerald-500 focus:bg-white outline-none'
-                            }`}
+                            onChange={e => setS3({ ...s3, dose: e.target.value, doseHr: '' })} 
+                            className="w-full p-3 border rounded-xl text-center font-black bg-emerald-50 border-emerald-200 text-emerald-700 focus:border-emerald-500 focus:bg-white outline-none"
                             placeholder="กรอกช่องนี้"
                           />
                         </div>
@@ -785,24 +808,23 @@
                           <input 
                             type="number" 
                             value={s3.doseHr} 
-                            onChange={e=>setS3({...s3, doseHr:e.target.value, dose:''})} 
-                            disabled={s3.dose !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s3.dose !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-teal-50 border-teal-200 text-teal-700 focus:border-teal-500 focus:bg-white outline-none'
-                            }`}
+                            onChange={e => setS3({ ...s3, doseHr: e.target.value, dose: '' })} 
+                            className="w-full p-3 border rounded-xl text-center font-black bg-teal-50 border-teal-200 text-teal-700 focus:border-teal-500 focus:bg-white outline-none"
                             placeholder="หรือช่องนี้"
                           />
                         </div>
                       </div>
 
-                      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-2 shadow-lg">
+                      {/* 💡 เพิ่มการแสดงผลทั้ง mcg/min และ mcg/hr */}
+                      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-3 shadow-lg">
                         <div className="flex flex-col">
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ความเข้มข้นของยาในขวด:</span>
                           <span className="text-3xl font-black">{s3Res.conc} <span className="text-xs font-bold opacity-80">mg/ml</span></span>
                         </div>
-                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดไมโครกรัม:</span>
-                          <span className="text-2xl font-black text-emerald-200">{s3Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
+                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5">
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดอัตรา:</span>
+                          <span className="text-lg font-black text-emerald-100">{s3Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
+                          <span className="text-lg font-black text-teal-200">{s3Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
                         </div>
                       </div>
                     </div>
@@ -831,10 +853,7 @@
           <footer className="bg-white border-t border-slate-200 px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-3 shrink-0 z-10 shadow-inner">
             <div className="text-center md:text-left">
               <p className="text-[11px] font-medium text-slate-700 tracking-tight">
-                Developed by Chartkawee Jehsaree &copy; <span className="text-slate-500 font-semibold ml-1">Version 1.0 (24/7/26)</span>
-              </p>
-              <p className="text-[10px] text-pink-600 font-bold uppercase tracking-widest leading-none mt-1">
-                Songkhla Hospital
+                Developed by Chartkawee Jehsaree &copy; <span className="text-slate-500 font-semibold ml-1">Version 1.0</span>
               </p>
             </div>
             <div className="flex items-center gap-4 bg-slate-900 text-white px-4 md:px-5 py-2.5 rounded-xl shadow-lg">
