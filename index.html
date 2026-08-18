@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DosiPedia - โรงพยาบาลสงขลา</title>
+  
+  <!-- 🎨 PWA & Desktop App Icons -->
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/cHnH8BkQ/logo-hiy.png">
+  <link rel="shortcut icon" href="https://i.postimg.cc/cHnH8BkQ/logo-hiy.png">
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/cHnH8BkQ/logo-hiy.png">
+  <meta name="theme-color" content="#ec4899">
+  <link rel="manifest" href='data:application/json,{"name":"DosiPedia","short_name":"DosiPedia","start_url":".","display":"standalone","background_color":"#f8fafc","theme_color":"#ec4899","icons":[{"src":"https://i.postimg.cc/cHnH8BkQ/logo-hiy.png","sizes":"192x192","type":"image/png"},{"src":"https://i.postimg.cc/cHnH8BkQ/logo-hiy.png","sizes":"512x512","type":"image/png"}]}'>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -31,10 +39,10 @@
 
   <script type="text/babel">
     const { useState, useEffect, useMemo, useRef } = React;
-    const LOGO_URL = "https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png";
+    const LOGO_URL = "https://i.postimg.cc/cHnH8BkQ/logo-hiy.png";
 
     // 🔗 URL ของ Google Apps Script Web App
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyDm2EeyTjFJJH1UZ2DyGkVmvPwuyuhDNS_Lh-r2xnwieWu_X5UqUdLZT-GP_UjS-GRjQ/exec";
+    const GAS_WEB_APP_URL = "YOUR_GAS_WEB_APP_URL_HERE";
 
     const DRUG_LIST = [
       { name: "Adenosine 6mg/2ml", min: 50, max: 50, unit: "mcg/dose", info: "Acute treatment of sustained paroxysmal supraventricular tachycardia.\n⏩Starting dose: 50 mcg/kg rapid IV push หรือ intraosseous (1-2 วินาที)\n⏩การปรับยา: เพิ่มขึ้นครั้งละ 50 mcg/kg ทุก 2 นาที\n⏩Maximum dose: 250 mcg/kg\nsaline flush: 5 ถึง 10 mL ทันทีหลังจากฉีด\n⏩การเตรียมยา: ใช้ยา 1 mL (3000 mcg) ผสมกับ 9 mL NS เพื่อให้ได้ final concentration 300 mcg/mL" },
