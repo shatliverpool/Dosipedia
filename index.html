@@ -1,870 +1,709 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DosiPedia - โรงพยาบาลสงขลา</title>
-  
-  <!-- 🎨 PWA & Desktop App Icons -->
-  <link rel="icon" type="image/png" href="https://i.postimg.cc/cHnH8BkQ/logo-hiy.png">
-  <link rel="shortcut icon" href="https://i.postimg.cc/cHnH8BkQ/logo-hiy.png">
-  <link rel="apple-touch-icon" href="https://i.postimg.cc/cHnH8BkQ/logo-hiy.png">
-  <meta name="theme-color" content="#ec4899">
-  <link rel="manifest" href='data:application/json,{"name":"DosiPedia","short_name":"DosiPedia","start_url":".","display":"standalone","background_color":"#f8fafc","theme_color":"#ec4899","icons":[{"src":"https://i.postimg.cc/cHnH8BkQ/logo-hiy.png","sizes":"192x192","type":"image/png"},{"src":"https://i.postimg.cc/cHnH8BkQ/logo-hiy.png","sizes":"512x512","type":"image/png"}]}'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DosiPedia - โรงพยาบาลสงขลา</title>
+    
+    <!-- PWA & Mobile Web App Settings -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DosiPedia">
+    <meta name="application-name" content="DosiPedia">
+    <meta name="theme-color" content="#ec4899">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap');
-    body { 
-      font-family: 'Kanit', sans-serif; 
-      background-color: #f8fafc; 
-      height: 100vh; 
-      margin: 0;
-      padding: 0;
-    }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    .info-text { white-space: pre-wrap; font-size: 13px; line-height: 1.6; }
-    .fade-in { animation: fadeIn 0.3s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  </style>
+    <!-- Icons Setup -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png">
+
+    <!-- Embedded Web Manifest for Android PWA / Home Screen -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"DosiPedia","short_name":"DosiPedia","description":"Pediatric Support System - Songkhla Hospital","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#ec4899","icons":[{"src":"https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png","sizes":"192x192","type":"image/png"},{"src":"https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png","sizes":"512x512","type":"image/png"}]}'>
+
+    <!-- React & Tailwind CSS CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        * {
+            font-family: 'Sarabun', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #f8fafc;
+            user-select: none;
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-  <div id="root"></div>
+<body>
+    <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect, useMemo, useRef } = React;
-    const LOGO_URL = "https://i.postimg.cc/cHnH8BkQ/logo-hiy.png";
+    <script type="text/babel">
+        // Web App & Google Apps Script Config
+        const LOGO_URL = "https://raw.githubusercontent.com/shatliverpool/Dosipedia/main/logo.png";
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx_YOUR_SCRIPT_ID_HERE/exec"; // วาง URL ของ Google Apps Script ที่นี่
 
-    // 🔗 URL ของ Google Apps Script Web App
-    const GAS_WEB_APP_URL = "YOUR_GAS_WEB_APP_URL_HERE";
+        const { useState, useEffect, useRef, useMemo } = React;
 
-    const DRUG_LIST = [
-      { name: "Adenosine 6mg/2ml", min: 50, max: 50, unit: "mcg/dose", info: "Acute treatment of sustained paroxysmal supraventricular tachycardia.\n⏩Starting dose: 50 mcg/kg rapid IV push หรือ intraosseous (1-2 วินาที)\n⏩การปรับยา: เพิ่มขึ้นครั้งละ 50 mcg/kg ทุก 2 นาที\n⏩Maximum dose: 250 mcg/kg\nsaline flush: 5 ถึง 10 mL ทันทีหลังจากฉีด\n⏩การเตรียมยา: ใช้ยา 1 mL (3000 mcg) ผสมกับ 9 mL NS เพื่อให้ได้ final concentration 300 mcg/mL" },
-      { 
-        name: "Adrenaline 1 mg/ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. IV", min: 0.01, max: 0.03, unit: "mg/dose" },
-          { title: "2. Continuous infusion", min: 0.1, max: 1, unit: "mcg/min" }
-        ],
-        info: "Resuscitation และ Severe Bradycardia\n⏩IV: 0.01-0.03 mg/kg (10-30 mcg/kg) = 0.1-0.3 ml/kg ของ adrenaline ความเข้มข้น 1:10,000  Saline flush: 0.5 ถึง 1 mL ทันทีหลังให้ยา\nอาจให้ทางท่อช่วยหายใจ โดยใช้ขนาดยาที่สูงกว่า ได้ถึง 0.1 mg/kg (100 mcg/kg) แล้วตามด้วย NSS 1 ml ทางท่อช่วยหายใจ ห้ามให้ยาขนาดสูงนี้ทางเส้นเลือดดำ\n⏩IV continuous infusion: เริ่มต้น 0.1 mcg/kg/min และปรับยาตาม response (Maximum 1 mcg/kg/min)\n⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 100 mcg/ml\n⏩ควรแก้ไขภาวะเลือดเป็นกรดก่อนการให้ยา adrenaline เพื่อให้ยาออกฤทธิ์ได้อย่างมีประสิทธิภาพมากขึ้น" 
-      },
-      { 
-        name: "Aminopylline 250 mg/10ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. Loading dose", min: 8, max: 8, unit: "mg/dose" },
-          { title: "2. Continuous infusion", min: 1.5, max: 3, unit: "mg/dose" }
-        ],
-        info: "⏩ห้าม IV push\n⏩Loading dose: 8 mg/kg IV infusion 30-60 นาที\n⏩Maintenance dose: 1.5 ถึง 3 mg/kg/dose ทุก 8-12 ชั่วโมง เริ่ม Maintenance dose หลังจากให้ Loading dose 8-12 ชั่วโมง\n⏩วิธีผสม 0.4 ml+D5W/NSS 0.6 ml = 10 mg/ml\n⏩เจือจางลงได้จนถึง 1 mg/mL สำหรับ continuous infusion \n⏩ถ้าเปลี่ยนจากยา aminophylline รูปฉีดเป็น theophylline รูปกิน: ไม่ต้องเพิ่มขนาดยา" 
-      },
-      { name: "Amiodarone 150 mg/3ml", min: 7, max: 15, unit: "mcg/min", info: "Arrhythmias\n⏩IV Loading Dose: 5 mg/kg IV infusion 20-60 นาที\n⏩Maintenance Infusion: 7-15 mcg/kg/minute (หรือ 10-20 mg/kg ต่อ 24 ชั่วโมง)\n⏩Max Concentration: 2 mg/mL หากให้ยาเกิน 1 ชั่วโมง ยกเว้นใช้ central line" },
-      { name: "Atropine sulfate 0.6 mg/ml", min: 0.01, max: 0.03, unit: "mg/dose", info: "⏩Bradycardia\nIV: 0.01-0.03 mg/kg/dose >1 นาที) ทุก 10-15\nขนาดยาสะสมสูงสุด (Cumulative maximum dose): ไม่เกิน 0.04 mg/kg\n⏩Premedication for Intubation (ยาเตรียมก่อนใส่ท่อช่วยหายใจ)\nIV: 0.01-0.02 mg/kg >1 นาที\n\n⏩Concentrations 0.05, 0.1, 0.4, and 1mg/mL" },
-      { name: "Bosentan solution 10 mg/ml", min: 1, max: 1, unit: "mg/dose", info: "⏩Persistent Pulmonary Hypertension : orally twice daily" },
-      { 
-        name: "Calcium Gluconate 1000 mg(4.6mEq)/10ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. Acute treatment", min: 100, max: 200, unit: "mg/dose", altMin: 1, altMax: 2, altUnit: "ml/dose" },
-          { title: "2. Maintenance", min: 200, max: 800, unit: "mg/day", altMin: 2, altMax: 8, altUnit: "ml/day" }
-        ],
-        info: "Early Hypocalcemia, Symptomatic (eg, seizures)\n⏩Initial treatment: 100-200 mg/kg/dose (1-2 mL/kg/dose) maximum 2000 mg/dose\n⏩Maintenance treatment: 200-800 mg/kg/day (2-8 mL/kg/day) IV infusion นาน 3 ถึง 5 วัน\n⏩การบริหารยา: 30-60 นาที \n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 10-20 mg/ml\n⏩หากเลี่ยงได้ ไม่แนะนำให้ผสมกับ NSS เนื่องจาก sodium ทำให้ calcium ขับออกเร็วขึ้น\n⏩หยุดให้ยาถ้าอัตราการเต้นของหัวใจเต้นช้ามากกว่า 100 ครั้ง/นาที"
-      },
-      { name: "Cisatracurium(NIMBEX) 150 mg/30 mL", min: 1, max: 3, unit: "mcg/min", info: "⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.1-0.4 mg/ml" },
-      { name: "doBUtamin 250 mg/20ml", min: 2, max: 25, unit: "mcg/min", info: "⏩ห้าม IV push ควรให้ทางเส้นเลือดดำใหญ่ๆ \nHypoperfusion and Hypotension:\n⏩continuous IV infusion 2-25 mcg/kg/minute \n⏩Max Conc : 2 mg/ml" },
-      { name: "doPAmine 250 mg/10ml", min: 2, max: 20, unit: "mcg/min", info: "⏩ควรให้ทางเส้นเลือดดำใหญ่ๆ \n⏩continuous IV infusion 2-20 mcg/kg/minute \n⏩Max Conc : 1.6 mg/ml" },
-      { 
-        name: "Fentanyl 50 mcg/ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. Single หรือ intermittent dose", min: 0.5, max: 4, unit: "mcg/dose ทุก 2-4 ชั่วโมง" },
-          { title: "2. Continuous infusion", min: 1, max: 5, unit: "mcg/hr" }
-        ],
-        info: "วิธีผสม 0.2 ml+D5W/NSS 0.8 ml = 10 mcg/ml\n\n⏩Sedation\nSingle หรือ intermittent dose: 0.5-4 mcg/kg/dose ทุก 2-4 ชั่วโมง\nContinuous infusion: 1-5 mcg/kg/hr\n⏩Analgesia\nSingle หรือ intermittent dose: 0.5-3 mcg/kg/dose slow IV push ทุก 2-4 ชั่วโมง\nContinuous infusion: 0.5-2 mcg/kg/hr\n⏩Anesthesia: 5-50 mcg/kg/dose\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา < 20 mcg/ml\n⏩อาจเกิด tolerance อย่างรวดเร็วหลังจากให้หยดเข้าหลอดเลือดดำ" 
-      },
-      { name: "Furosemide 20 mg/2 mL", min: 1, max: 2, unit: "mg/dose", info: "⏩Premature infant: every 24 hours.\nFull-term infant: every 12 hours.\nFull-term infant older than 1 month: every 6 to 8 hours.\n\n⏩concentration : 2-10 mg/mL over 5-30 min" },
-      { 
-        name: "HEPARIN INJ. 5000 iu/ml Vial (5 ml.)",
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. Bolus", min: 75, max: 75, unit: "unit/dose" },
-          { title: "2. Maintenance", min: 28, max: 28, unit: "unit/hr" }
-        ],
-        info: "⏩การรักษาภาวะลิ่มเลือดอุดตัน (Treatment of thrombosis)\n-75 units/kg IV นาน 10 นาที\n-Maintenance : 28 units/kg/hour\n⏩การติดตามและปรับขนาดยา:\n-วัดค่า aPTT หลังเริ่มให้ยาไปแล้ว 4 ชั่วโมง\n-ปรับขนาดยาเพื่อให้ค่า aPTT สอดคล้องกับระดับ Anti-factor Xa 0.35-0.7 (aPTT 60-85 วินาที)\n⏩ความเข้มข้นที่ใช้: ระวังเรื่องความเข้มข้นของยาที่ใช้ \nLoading dose: 100-500 units/mL\nContinuous IV infusion: 10-500 units/mL\n⏩วิธีผสม : Heparin 0.1 ml + D5W/NSS 4.9 ml = 100 unit/ml\n⏩Heparin 100 unit + NSS up to 1 ml flush double lumen  8 hr\n⏩ควรจำกัดระยะเวลาการรักษาเพียง 10-14 วัน"
-      },
-      { name: "Lidocaine 2 % Vial (400 mg/20 ml)", min: 10, max: 50, unit: "mcg/min", info: "⏩Anti arrhythmia :\nInitial bolus dose: 0.5-1 mg/kg IV push 5 นาที ซ้ำได้ทุก 10 นาที\nขนาดยาสะสมสูงสุด (Maximum total bolus dose): ไม่เกิน 5 mg/kg\nMaintenance IV infusion: 10-50 mcg/kg/min\n⏩concentration\nIV push: 1-20 mg/mL\nContinuous infusion 0.8 ถึง 8 mg/mL" },
-      { 
-        name: "Magnesium sulfate (MgSO4)50% (Mg= 1G/amp) 2ml", 
-        min: 25, 
-        max: 50, 
-        unit: "mg/dose", 
-        hasDoubleUnit: true, 
-        altMin: 0.05, 
-        altMax: 0.1, 
-        altUnit: "ml/dose",
-        info: "⏩Hypomagnesemia 25-50 mg/kg ให้แบบ IV infusion 30-60 นาที (torsades with pulses 10-20 นาที,  pulseless torsades rapid infusion)\n⏩concentration 100-200 mg/mL" 
-      },
-      { 
-        name: "Midazolam 5mg/ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "Sedation - 1. IV", min: 0.05, max: 0.15, unit: "mg/dose" },
-          { title: "Sedation - 2. Maintenance", min: 0.01, max: 0.06, unit: "mg/hr", altMin: 10, altMax: 60, altUnit: "mcg/hr" },
-          { title: "Anticonvulsant - 1. Loading dose", min: 0.15, max: 0.15, unit: "mg/dose" },
-          { title: "Anticonvulsant - 2. Maintenance", min: 0.06, max: 0.4, unit: "mg/hr", altMin: 1, altMax: 7, altUnit: "mcg/min" }
-        ],
-        info: "⏩Sedation\nIV: 0.05-0.15 mg/kg ทุก 2-4 ชั่วโมง\nContinuous IV infusion: 0.01-0.06 mg/kg/hour (10-60 mcg/kg/hour)\n⏩Anticonvulsant\nLoading dose: 0.15 mg/kg (150 mcg/kg) IV\nMaintenance infusion: 0.06-0.4 mg/kg/hour (1-7 mcg/kg/minute)\n⏩Intravenous: slow IV push 5-10 นาที\n⏩วิธีผสม 0.2 ml+D5W/NSS 0.8 ml = 1mg/ml\n\n⏩Continuous IV infusion: เจือจางใน NS หรือ D5W ความเข้มข้น 0.5 mg/mL" 
-      },
-      { 
-        name: "Milrinone 10mg/10ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. Loading dose (50 mcg/kg IV >15 นาที หรือ 75 mcg/kg IV >60 นาที)", min: 50, max: 75, unit: "mcg/dose" },
-          { title: "2. Maintenance infusion", min: 0.3, max: 0.75, unit: "mcg/min for 35 hours" }
-        ],
-        info: "⏩Low Cardiac Output; Post-Cardiac Surgery\nLoading dose:\n50 mcg/kg IV 15 นาที หรือ 75 mcg/kg IV 60 นาที\nGA < 30 สัปดาห์: loading dose นาน 3 ชั่วโมง\nMaintenance infusion: 0.3 ถึง 0.75 mcg/kg/minute 35 ชั่วโมง\n⏩Max Conc : 0.2 mg/ml" 
-      },
-      { 
-        name: "Morphine 10 mg/ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. IV", min: 0.05, max: 0.2, unit: "mg/dose" },
-          { title: "2. Continuous infusion", min: 10, max: 20, unit: "mcg/hr" }
-        ],
-        info: "⏩Sedation, pain:\n- IV : 0.05-0.2 mg/kg/dose IV, IM, subQ ทุก 4 ชั่วโมง\n- Continuous infusion : Loading : 100-150 mcg/kg over 1 hr Then 10 - 20 mg/kg/hr \n⏩administer over 15-30 min\n\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.1 - 5 mg/ml\n⏩วิธีผสม 0.1 ml+D5W/NSS 0.9 ml = 0.1 mg/ml" 
-      },
-      { name: "Nicardipine 10mg/10ml", min: 0.5, max: 2, unit: "mcg/min", info: "⏩Initial dose: 0.5 mcg/kg/min ให้แบบ continuous IV infusion\n⏩Maintenance dose: 0.5-2 mcg/kg/min\n⏩การเตรียมยา: ความเข้มข้น 0.1 mg/mL" },
-      { name: "Norepinephrine 4 mg/4ml", min: 0.05, max: 0.1, unit: "mcg/min", info: "⏩Septic Shock GA > 35 สัปดาห์:\ncontinuous infusion : 0.05-0.1 mcg/kg/min\nขนาดยาสูงสุดที่ให้ได้ : 2 mcg/kg/min\n⏩วิธีผสม 1 ml+D5W 9 ml = 0.1 mg/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา < 0.15 mg/ml\n⏩ไม่แนะนำให้ใช้ NSS:  สูญเสียตัวยาจากปฎิกิริยา oxidation\n⏩แนะนำให้ทาง Central line เนื่องจากช่วยลดความเสี่ยงในการเกิดsevere vasoconstriction และ ischemia" },
-      { 
-        name: "PHENOBARB  INJ. 200 mg (1 ml.)",
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. Loading dose", min: 20, max: 20, unit: "mg/dose" },
-          { title: "2. Maintenance", min: 3, max: 5, unit: "mg/day" }
-        ],
-        info: "⏩loading dose : 20 mg/kg IV 20 นาที ถ้าไม่หยุดชัก เพิ่มได้อีก 5 mg/kg (สูงสุด 40 mg/kg)\n⏩Maintainance dose : 3-5 mg/kg/day หลังloading dose 12-24 ชั่วโมง ความถี่ให้วันละครั้ง ทางหลอดเลือดดำช้าๆ \n⏩Max rate : 1 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)\n\n⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 20 mg/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 10 mg/ml"
-      },
-      { 
-        name: "Phenytoin 250 mg/5 ml", 
-        hasMultipleChannels: true,
-        channels: [
-          { title: "1. Loading dose", min: 15, max: 20, unit: "mg/dose" },
-          { title: "2. Maintenance", min: 4, max: 8, unit: "mg/day" }
-        ],
-        info: "⏩Loading dose: 15-20 mg/kg IV >30 mins\n⏩Maintenance dose: 4-8 mg/kg q 24 hr IV drip in 30-60 min\n⏩Max rate : 0.5 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 1-5 mg/ml\n⏩ห้ามใช้ D5W ยาจะตกตะกอน\n⏩ควรล้างสายด้วยน้ำเกลือก่อนและหลังให้ยา\n⏩มักไม่คงตัวในสารละลายต่างๆ ที่ให้ทางหลอดเลือดดำ ควรหลีกเลี่ยงการให้ยาทางเส้นเลือดดำใหญ่ (central line) เนื่องจากจะเพิ่มความเสี่ยงการตกตะกอน" 
-      },
-      { name: "Potassium chloride(KCl) 20 mEq/10ml", min: 0.5, max: 1, unit: "mEq/hr over 1 hour", info: "⏩Acute treatment of symptomatic hypokalemia: 0.5-1 mEq/kg IV over 1 ชั่วโมง \n⏩Maximum infusion rate 1 mEq/kg/hour [central line only] (with cardiac monitor) \n⏩maximum concentration \n\tperipheral infusion 40 mEq\n\tcentral line 80 mEq\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2 mEq/ml\n⏩หากเลี่ยงได้ ไม่แนะนำสารละลายที่มีน้ำตาล เนื่องจากจะลดระดับ serum potassium" },
-      { name: "Regular Insulin 100unit/ml", min: 0.01, max: 0.1, unit: "unit/hr", info: "⏩Hyperglycemia\nContinuous IV infusion: 0.01-0.1 unit/kg/hour\nIntermittent dose: 0.1-0.2 unit/kg subQ ทุก 6-12 ชั่วโมง\n⏩Hyperkalemia\nInitial: 0.1-0.2 units/kg/hour ร่วมกับ Dextrose 0.5 g/kg/hour continuous IV infusion\n\n⏩วิธีผสม 0.1 ml+SWFI 0.9 ml = 10unit/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2-5 unnit/ml\n⏩ควรไล่สาย insulin ทิ้งไว้ประมาณ 20 นาทีก่อนจะให้ผู้ป่วย เพื่อให้ insulin เกาะที่สายเต็มที่ \n⏩การใช้ยาที่มีความเข้มข้นสูง และทิ้งระยะเวลารอนาน จะทำให้ลดเวลาในการให้ insulin \n⏩เพื่อให้ได้ steady-state ค่อยๆ ปรับยาตามระดับน้ำตาล" },
-      { name: "Sildenafil syrup 5 mg/ml", min: 0.5, max: 1, unit: "mg/dose", info: "⏩Persistent Pulmonary Hypertension : orally 3 times daily" },
-      { 
-        name: "Sodium Bicarb (NaHCO3) (44.6 meq/50 ml) 7.5%", 
-        min: 1, 
-        max: 2, 
-        unit: "mEq/dose", 
-        hasDoubleUnit: true, 
-        altMin: 1.121, 
-        altMax: 2.242, 
-        altUnit: "ml/dose",
-        info: "⏩1-2 mEq/kg ทางหลอดเลือดดำช้าๆ อย่างน้อย 30 นาที\n⏩Infusion rate: over 30  mins\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.25 - 5 mEq/ml" 
-      },
-      { name: "Spinorolactone syrup 10 mg/ml", min: 1, max: 3, unit: "mg/dose", info: "⏩Orally q 24 hr" }
-    ].sort((a, b) => a.name.localeCompare(b.name));
+        // --- Master Drug Data ---
+        const DRUG_DATA = [
+            {
+                id: "adrenaline",
+                name: "Adrenaline 1 mg/ml",
+                channels: [
+                    { name: "IV", min: 0.01, max: 0.03, unit: "mg" },
+                    { name: "Continuous infusion", min: 0.1, max: 1, unit: "mcg/min" }
+                ],
+                info: `Resuscitation และ Severe Bradycardia
+⏩IV: 0.01-0.03 mg/kg (10-30 mcg/kg) = 0.1-0.3 ml/kg ของ adrenaline ความเข้มข้น 1:10,000  Saline flush: 0.5 ถึง 1 mL ทันทีหลังให้ยา
+อาจให้ทางท่อช่วยหายใจ โดยใช้ขนาดยาที่สูงกว่า ได้ถึง 0.1 mg/kg (100 mcg/kg) แล้วตามด้วย NSS 1 ml ทางท่อช่วยหายใจ ห้ามให้ยาขนาดสูงนี้ทางเส้นเลือดดำ
+⏩IV continuous infusion: เริ่มต้น 0.1 mcg/kg/min และปรับยาตาม response (Maximum 1 mcg/kg/min)
+⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 100 mcg/ml
+⏩ควรแก้ไขภาวะเลือดเป็นกรดก่อนการให้ยา adrenaline เพื่อให้ยาออกฤทธิ์ได้อย่างมีประสิทธิภาพมากขึ้น`
+            },
+            {
+                id: "aminophylline",
+                name: "Aminophylline 250 mg/10ml",
+                channels: [
+                    { name: "Loading dose", min: 8, max: 8, unit: "mg" },
+                    { name: "Continuous infusion", min: 1.5, max: 3, unit: "mg/dose" }
+                ],
+                info: `⏩ห้าม IV push
+⏩Loading dose: 8 mg/kg IV infusion 30-60 นาที
+⏩Maintenance dose: 1.5 ถึง 3 mg/kg/dose ทุก 8-12 ชั่วโมง เริ่ม Maintenance dose หลังจากให้ Loading dose 8-12 ชั่วโมง
+⏩วิธีผสม 0.4 ml+D5W/NSS 0.6 ml = 10 mg/ml
+⏩เจือจางลงได้จนถึง 1 mg/mL สำหรับ continuous infusion
+⏩ถ้าเปลี่ยนจากยา aminophylline รูปฉีดเป็น theophylline รูปกิน: ไม่ต้องเพิ่มขนาดยา`
+            },
+            {
+                id: "dobutamine",
+                name: "doBUtamin 250 mg/20ml",
+                min: 2,
+                max: 25,
+                unit: "mcg/min",
+                info: `⏩ห้าม IV push ควรให้ทางเส้นเลือดดำใหญ่ๆ
+Hypoperfusion and Hypotension:
+⏩continuous IV infusion 2-25 mcg/kg/minute
+⏩Max Conc : 2 mg/ml`
+            },
+            {
+                id: "dopamine",
+                name: "doPAmine 250 mg/10ml",
+                min: 2,
+                max: 20,
+                unit: "mcg/min",
+                info: `⏩ควรให้ทางเส้นเลือดดำใหญ่ๆ
+⏩continuous IV infusion 2-20 mcg/kg/minute
+⏩Max Conc : 1.6 mg/ml`
+            },
+            {
+                id: "fentanyl",
+                name: "Fentanyl 50 mcg/ml",
+                channels: [
+                    { name: "Single หรือ intermittent dose", min: 0.5, max: 4, unit: "mcg/dose ทุก 2-4 ชั่วโมง" },
+                    { name: "Continuous infusion", min: 1, max: 5, unit: "mcg/hr" }
+                ],
+                info: `วิธีผสม 0.2 ml+D5W/NSS 0.8 ml = 10 mcg/ml
 
-    const App = () => {
-      const [isLoggedIn, setIsLoggedIn] = useState(false);
-      const [password, setPassword] = useState('');
-      const [weight, setWeight] = useState('');
-      const [selectedDrug, setSelectedDrug] = useState(DRUG_LIST[0]);
-      
-      const [s2, setS2] = useState({ drug: '', sol: '', dose: '', doseHr: '' });
-      const [s3, setS3] = useState({ rate: '', dose: '', doseHr: '' });
-      
-      const [feedback, setFeedback] = useState('');
-      const [searchTerm, setSearchTerm] = useState('');
-      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-      
-      const [toast, setToast] = useState({ show: false, message: '', type: '' });
+⏩Sedation
+Single หรือ intermittent dose: 0.5-4 mcg/kg/dose ทุก 2-4 ชั่วโมง
+Continuous infusion: 1-5 mcg/kg/hr
+⏩Analgesia
+Single หรือ intermittent dose: 0.5-3 mcg/kg/dose slow IV push ทุก 2-4 ชั่วโมง
+Continuous infusion: 0.5-2 mcg/kg/hr
+⏩Anesthesia: 5-50 mcg/kg/dose
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา < 20 mcg/ml
+⏩อาจเกิด tolerance อย่างรวดเร็วหลังจากให้หยดเข้าหลอดเลือดดำ`
+            },
+            {
+                id: "heparin",
+                name: "HEPARIN INJ. 5000 iu/ml Vial (5 ml.)",
+                channels: [
+                    { name: "Bolus", min: 75, max: 75, unit: "unit/dose" },
+                    { name: "Maintenance", min: 28, max: 28, unit: "unit/hr" }
+                ],
+                info: `⏩การรักษาภาวะลิ่มเลือดอุดตัน (Treatment of thrombosis)
+- 75 units/kg IV นาน 10 นาที
+- Maintenance : 28 units/kg/hour
+⏩การติดตามและปรับขนาดยา:
+- วัดค่า aPTT หลังเริ่มให้ยาไปแล้ว 4 ชั่วโมง
+- ปรับขนาดยาเพื่อให้ค่า aPTT สอดคล้องกับระดับ Anti-factor Xa 0.35-0.7 (aPTT 60-85 วินาที)
+⏩ความเข้มข้นที่ใช้: ระวังเรื่องความเข้มข้นของยาที่ใช้
+Loading dose: 100-500 units/mL
+Continuous IV infusion: 10-500 units/mL
+⏩วิธีผสม : Heparin 0.1 ml + D5W/NSS 4.9 ml = 100 unit/ml
+⏩Heparin 100 unit + NSS up to 1 ml flush double lumen 8 hr
+⏩ควรจำกัดระยะเวลาการรักษาเพียง 10-14 วัน`
+            },
+            {
+                id: "mgso4",
+                name: "Magnesium sulfate (MgSO4) 50% (Mg= 1G/amp) 2ml",
+                channels: [
+                    { name: "mg/dose", min: 25, max: 50, unit: "mg/dose" },
+                    { name: "ml/dose", min: 0.05, max: 0.1, unit: "ml/dose" }
+                ],
+                info: `⏩Hypomagnesemia 25-50 mg/kg ให้แบบ IV infusion 30-60 นาที (torsades with pulses 10-20 นาที, pulseless torsades rapid infusion)
+⏩concentration 100-200 mg/mL`
+            },
+            {
+                id: "midazolam",
+                name: "Midazolam 5mg/ml",
+                channels: [
+                    { name: "Sedation: IV", min: 0.05, max: 0.15, unit: "mg/dose" },
+                    { name: "Sedation: Maintenance", min: 0.01, max: 0.06, unit: "mg/hr" },
+                    { name: "Anticonvulsant: Loading dose", min: 0.15, max: 0.15, unit: "mg/dose" },
+                    { name: "Anticonvulsant: Maintenance", min: 0.06, max: 0.4, unit: "mg/hr" }
+                ],
+                info: `⏩Sedation
+IV: 0.05-0.15 mg/kg ทุก 2-4 ชั่วโมง
+Continuous IV infusion: 0.01-0.06 mg/kg/hour (10-60 mcg/kg/hour)
+⏩Anticonvulsant
+Loading dose: 0.15 mg/kg (150 mcg/kg) IV
+Maintenance infusion: 0.06-0.4 mg/kg/hour (1-7 mcg/kg/minute)
+⏩Intravenous: slow IV push 5-10 นาที
+⏩วิธีผสม 0.2 ml+D5W/NSS 0.8 ml = 1mg/ml
+⏩Continuous IV infusion: เจือจางใน NS หรือ D5W ความเข้มข้น 0.5 mg/mL`
+            },
+            {
+                id: "milrinone",
+                name: "Milrinone 10mg/10ml",
+                channels: [
+                    { name: "Loading dose (50 mcg/kg IV >15 นาที หรือ 75 mcg/kg IV >60 นาที)", min: 50, max: 75, unit: "mcg/dose" },
+                    { name: "Maintenance infusion", min: 0.3, max: 0.75, unit: "mcg/min for 35 hours" }
+                ],
+                info: `⏩Low Cardiac Output; Post-Cardiac Surgery
+Loading dose:
+50 mcg/kg IV 15 นาที หรือ 75 mcg/kg IV 60 นาที
+GA < 30 สัปดาห์: loading dose นาน 3 ชั่วโมง
+Maintenance infusion: 0.3 ถึง 0.75 mcg/kg/minute 35 ชั่วโมง
+⏩Max Conc : 0.2 mg/ml`
+            },
+            {
+                id: "morphine",
+                name: "Morphine 10 mg/ml",
+                channels: [
+                    { name: "IV", min: 0.05, max: 0.2, unit: "mg/dose" },
+                    { name: "Continuous infusion", min: 10, max: 20, unit: "mcg/hr" }
+                ],
+                info: `⏩Sedation, pain:
+- IV : 0.05-0.2 mg/kg/dose IV, IM, subQ ทุก 4 ชั่วโมง
+- Continuous infusion : Loading : 100-150 mcg/kg over 1 hr Then 10 - 20 mg/kg/hr
+⏩administer over 15-30 min
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.1 - 5 mg/ml
+⏩วิธีผสม 0.1 ml+D5W/NSS 0.9 ml = 0.1 mg/ml`
+            },
+            {
+                id: "norepinephrine",
+                name: "Norepinephrine 4 mg/4ml",
+                min: 0.05,
+                max: 0.1,
+                unit: "mcg/min",
+                info: `⏩Septic Shock GA > 35 สัปดาห์:
+continuous infusion : 0.05-0.1 mcg/kg/min
+ขนาดยาสูงสุดที่ให้ได้ : 2 mcg/kg/min
+⏩วิธีผสม 1 ml+D5W 9 ml = 0.1 mg/ml
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา < 0.15 mg/ml
+⏩ไม่แนะนำให้ใช้ NSS: สูญเสียตัวยาจากปฎิกิริยา oxidation
+⏩แนะนำให้ทาง Central line เนื่องจากช่วยลดความเสี่ยงในการเกิดsevere vasoconstriction และ ischemia`
+            },
+            {
+                id: "regular_insulin",
+                name: "Regular Insulin 100unit/ml",
+                min: 0.01,
+                max: 0.1,
+                unit: "unit/hr",
+                info: `⏩Hyperglycemia
+Continuous IV infusion: 0.01-0.1 unit/kg/hour
+Intermittent dose: 0.1-0.2 unit/kg subQ ทุก 6-12 ชั่วโมง
+⏩Hyperkalemia
+Initial: 0.1-0.2 units/kg/hour ร่วมกับ Dextrose 0.5 g/kg/hour continuous IV infusion
+⏩วิธีผสม 0.1 ml+SWFI 0.9 ml = 10unit/ml
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2-5 unnit/ml
+⏩ควรไล่สาย insulin ทิ้งไว้ประมาณ 20 นาทีก่อนจะให้ผู้ป่วย เพื่อให้ insulin เกาะที่สายเต็มที่
+⏩การใช้ยาที่มีความเข้มข้นสูง และทิ้งระยะเวลารอนาน จะทำให้ลดเวลาในการให้ insulin
+⏩เพื่อให้ได้ steady-state ค่อยๆ ปรับยาตามระดับน้ำตาล`
+            },
+            {
+                id: "kcl",
+                name: "Potassium chloride(KCl) 20 mEq/10ml",
+                min: 0.5,
+                max: 1,
+                unit: "mEq/hr over 1 hour",
+                info: `⏩Acute treatment of symptomatic hypokalemia: 0.5-1 mEq/kg IV over 1 ชั่วโมง
+⏩Maximum infusion rate 1 mEq/kg/hour [central line only] (with cardiac monitor)
+⏩maximum concentration
+    peripheral infusion 40 mEq
+    central line 80 mEq
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2 mEq/ml
+⏩หากเลี่ยงได้ ไม่แนะนำสารละลายที่มีน้ำตาล เนื่องจากจะลดระดับ serum potassium`
+            },
+            {
+                id: "calcium_gluconate",
+                name: "Calcium Gluconate 1000 mg(4.6mEq)/10ml",
+                channels: [
+                    { name: "Acute treatment", min: 100, max: 200, unit: "mg(ml)/dose" },
+                    { name: "Maintenance", min: 200, max: 800, unit: "mg(ml)/day" }
+                ],
+                info: `Early Hypocalcemia, Symptomatic (eg, seizures)
+⏩Initial treatment: 100-200 mg/kg/dose (1-2 mL/kg/dose) maximum 2000 mg/dose
+⏩Maintenance treatment: 200-800 mg/kg/day (2-8 mL/kg/day) IV infusion นาน 3 ถึง 5 วัน
+⏩การบริหารยา: 30-60 นาที
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา 10-20 mg/ml
+⏩หากเลี่ยงได้ ไม่แนะนำให้ผสมกับ NSS เนื่องจาก sodium ทำให้ calcium ขับออกเร็วขึ้น
+⏩หยุดให้ยาถ้าอัตราการเต้นของหัวใจเต้นช้ามากกว่า 100 ครั้ง/นาที`
+            },
+            {
+                id: "sodium_bicarb",
+                name: "Sodium Bicarb (NaHCO3) (44.6 meq/50 ml) 7.5%",
+                channels: [
+                    { name: "mEq/dose", min: 1, max: 2, unit: "mEq/dose" },
+                    { name: "ml/dose", min: 1.121, max: 2.242, unit: "ml/dose" }
+                ],
+                info: `⏩1-2 mEq/kg ทางหลอดเลือดดำช้าๆ อย่างน้อย 30 นาที
+⏩Infusion rate: over 30 mins
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.25 - 5 mEq/ml`
+            },
+            {
+                id: "phenobarbital",
+                name: "PHENOBARB INJ. 200 mg (1 ml.)",
+                channels: [
+                    { name: "loading dose", min: 20, max: 20, unit: "mg/dose" },
+                    { name: "Maintenance", min: 3, max: 5, unit: "mg/day" }
+                ],
+                info: `⏩loading dose : 20 mg/kg IV 20 นาที ถ้าไม่หยุดชัก เพิ่มได้อีก 5 mg/kg (สูงสุด 40 mg/kg)
+⏩Maintainance dose : 3-5 mg/kg/day หลังloading dose 12-24 ชั่วโมง ความถี่ให้วันละครั้ง ทางหลอดเลือดดำช้าๆ
+⏩Max rate : 1 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)
+⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 20 mg/ml
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา 10 mg/ml`
+            },
+            {
+                id: "phenytoin",
+                name: "Phenytoin 250 mg/5 ml",
+                channels: [
+                    { name: "loading dose", min: 15, max: 20, unit: "mg/dose" },
+                    { name: "Maintenance", min: 4, max: 8, unit: "mg/day" }
+                ],
+                info: `⏩Loading dose: 15-20 mg/kg IV >30 mins
+⏩Maintenance dose: 4-8 mg/kg q 24 hr IV drip in 30-60 min
+⏩Max rate : 0.5 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)
+⏩ความเข้มข้นสุดท้ายก่อนให้ยา 1-5 mg/ml
+⏩ห้ามใช้ D5W ยาจะตกตะกอน
+⏩ควรล้างสายด้วยน้ำเกลือก่อนและหลังให้ยา
+⏩มักไม่คงตัวในสารละลายต่างๆ ที่ให้ทางหลอดเลือดดำ ควรหลีกเลี่ยงการให้ยาทางเส้นเลือดดำใหญ่ (central line) เนื่องจากจะเพิ่มความเสี่ยงการตกตะกอน`
+            }
+        ];
 
-      const lastSentS2 = useRef("");
-      const lastSentS3 = useRef("");
-      const lastSentWeight = useRef("");
-      const s2TimerRef = useRef(null);
-      const s3TimerRef = useRef(null);
-      const weightTimerRef = useRef(null);
+        // --- Main App Component ---
+        function App() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [pin, setPin] = useState('');
+            const [loginError, setLoginError] = useState('');
+            
+            const [weight, setWeight] = useState('');
+            const [selectedDrugId, setSelectedDrugId] = useState(DRUG_DATA[0].id);
+            const [activeTab, setActiveTab] = useState('rate'); // 'rate' | 'conc'
+            const [feedbackText, setFeedbackText] = useState('');
+            const [feedbackSent, setFeedbackSent] = useState(false);
 
-      const showNotification = (message, type = 'success') => {
-        setToast({ show: true, message, type });
-        setTimeout(() => setToast({ show: false, message: '', type: '' }), 4000);
-      };
+            // Concentration Calculator States
+            const [concDrugAmount, setConcDrugAmount] = useState('');
+            const [concFluidVolume, setConcFluidVolume] = useState('');
+            const [concDoseRate, setConcDoseRate] = useState('');
+            const [concDoseUnit, setConcDoseUnit] = useState('mcg/kg/min');
 
-      const handleLogin = (e) => {
-        e.preventDefault();
-        if (password === '123456') {
-          setIsLoggedIn(true);
-          showNotification('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับครับ', 'success');
-        } else {
-          showNotification('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง', 'error');
-        }
-      };
+            const saveTimerRef = useRef(null);
 
-      const sendToSheet = (type, details) => {
-        const detailsStr = typeof details === 'object' ? details.details : details;
-        const payloadData = typeof details === 'object' ? details : { type, details: detailsStr };
+            const selectedDrug = useMemo(() => {
+                return DRUG_DATA.find(d => d.id === selectedDrugId) || DRUG_DATA[0];
+            }, [selectedDrugId]);
 
-        if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "YOUR_GAS_WEB_APP_URL_HERE") {
-          fetch(GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "saveToSheet", payload: payloadData }),
-            redirect: 'follow'
-          }).catch(err => console.error("API Error:", err));
-        }
+            // Debounce Auto-save to Google Sheets (5 Seconds)
+            useEffect(() => {
+                if (!isLoggedIn) return;
 
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          if (typeof google.script.run.logCalculation === 'function') {
-            google.script.run.logCalculation(type, detailsStr);
-          }
-          if (typeof google.script.run.saveToSheet === 'function') {
-            google.script.run.saveToSheet(payloadData);
-          }
-        }
-      };
+                if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
 
-      const filteredDrugs = useMemo(() => {
-        return DRUG_LIST.filter(drug => 
-          drug.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }, [searchTerm]);
+                saveTimerRef.current = setTimeout(() => {
+                    sendToSheet();
+                }, 5000);
 
-      const s1Res = useMemo(() => {
-        const w = parseFloat(weight);
-        if (!w || w <= 0) {
-          if (selectedDrug.hasMultipleChannels) {
-            return {
-              isMulti: true,
-              channels: selectedDrug.channels.map(ch => ({
-                title: ch.title,
-                min: "0.00",
-                max: "0.00",
-                unit: ch.unit,
-                hasAlt: !!ch.altUnit,
-                altMin: "0.00",
-                altMax: "0.00",
-                altUnit: ch.altUnit || ""
-              }))
+                return () => {
+                    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+                };
+            }, [weight, selectedDrugId, activeTab, concDrugAmount, concFluidVolume, concDoseRate, concDoseUnit, isLoggedIn]);
+
+            // Function to send data to GAS Sheet
+            const sendToSheet = () => {
+                if (!weight) return; // ไม่ส่งถ้ายังไม่ใส่น้ำหนัก
+
+                const payload = {
+                    timestamp: new Date().toISOString(),
+                    weight: weight,
+                    selectedDrug: selectedDrug.name,
+                    calculatorMode: activeTab === 'rate' ? 'Rate Calculation' : 'Concentration Calculation',
+                    concDrugAmount: concDrugAmount || '-',
+                    concFluidVolume: concFluidVolume || '-',
+                    concDoseRate: concDoseRate || '-',
+                    concDoseUnit: concDoseUnit
+                };
+
+                // ส่งข้อมูลผ่าน API fetch หรือ google.script.run
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    google.script.run.saveToSheet(payload);
+                } else if (GAS_WEB_APP_URL && !GAS_WEB_APP_URL.includes("YOUR_SCRIPT_ID")) {
+                    fetch(GAS_WEB_APP_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'saveToSheet', payload: payload })
+                    }).catch(err => console.log('Auto-save err:', err));
+                }
             };
-          }
-          return { isMulti: false, min: "0.00", max: "0.00", unit: selectedDrug.unit, hasAlt: false, altMin: "0.00", altMax: "0.00" };
-        }
-        
-        if (selectedDrug.hasMultipleChannels) {
-          return {
-            isMulti: true,
-            channels: selectedDrug.channels.map(ch => ({
-              title: ch.title,
-              min: (ch.min * w).toFixed(2),
-              max: (ch.max * w).toFixed(2),
-              unit: ch.unit,
-              hasAlt: !!ch.altUnit,
-              altMin: ch.altMin ? (ch.altMin * w).toFixed(2) : "0.00",
-              altMax: ch.altMax ? (ch.altMax * w).toFixed(2) : "0.00",
-              altUnit: ch.altUnit || ""
-            }))
-          };
-        }
 
-        const mainMin = (selectedDrug.min * w).toFixed(2);
-        const mainMax = (selectedDrug.max * w).toFixed(2);
-        
-        if (selectedDrug.hasDoubleUnit || selectedDrug.isFentanyl) {
-          return {
-            isMulti: false,
-            min: mainMin,
-            max: mainMax,
-            unit: selectedDrug.unit,
-            hasAlt: true,
-            altMin: (selectedDrug.altMin * w).toFixed(2),
-            altMax: (selectedDrug.altMax * w).toFixed(2),
-            altUnit: selectedDrug.altUnit
-          };
-        }
-        
-        return { isMulti: false, min: mainMin, max: mainMax, unit: selectedDrug.unit, hasAlt: false, altMin: "0.00", altMax: "0.00" };
-      }, [weight, selectedDrug]);
+            const handleLogin = (e) => {
+                e.preventDefault();
+                if (pin === '123456') {
+                    setIsLoggedIn(true);
+                    setLoginError('');
+                } else {
+                    setLoginError('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+                }
+            };
 
-      const calculatedConcS2 = useMemo(() => {
-        const pd = parseFloat(s2.drug);
-        const ps = parseFloat(s2.sol);
-        if (pd > 0 && ps > 0) {
-          return (pd / ps).toFixed(2);
-        }
-        return "0.00";
-      }, [s2.drug, s2.sol]);
+            const handleSendFeedback = () => {
+                if (!feedbackText.trim()) return;
 
-      const s2Res = useMemo(() => {
-        const pd = parseFloat(s2.drug), ps = parseFloat(s2.sol), pw = parseFloat(weight);
-        const pdoMin = parseFloat(s2.dose);
-        const pdoHr = parseFloat(s2.doseHr);
-        const conc = parseFloat(calculatedConcS2);
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    google.script.run.saveFeedback(feedbackText);
+                } else if (GAS_WEB_APP_URL && !GAS_WEB_APP_URL.includes("YOUR_SCRIPT_ID")) {
+                    fetch(GAS_WEB_APP_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'saveFeedback', payload: { text: feedbackText } })
+                    }).catch(err => console.log('Feedback err:', err));
+                }
 
-        if (conc > 0 && pw > 0) {
-          if (pdoMin > 0) {
-            const rateMlHr = (((pdoMin / 1000) * pw) / conc) * 60;
-            const mcgMin = (rateMlHr * conc * 1000) / 60;
-            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/min' };
-          } else if (pdoHr > 0) {
-            const rateMlHr = ((pdoHr / 1000) * pw) / conc;
-            const mcgMin = (rateMlHr * conc * 1000) / 60;
-            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/hr' };
-          }
-        }
-        return { mlHr: "0.00", mcgMin: "0.00", activeUnit: '' };
-      }, [s2, weight, calculatedConcS2]);
+                setFeedbackSent(true);
+                setTimeout(() => {
+                    setFeedbackText('');
+                    setFeedbackSent(false);
+                }, 3000);
+            };
 
-      const s3Res = useMemo(() => {
-        const pr = parseFloat(s3.rate), pw = parseFloat(weight);
-        const pdoMin = parseFloat(s3.dose);
-        const pdoHr = parseFloat(s3.doseHr);
+            // Calculate Dose Rate Results
+            const rateResults = useMemo(() => {
+                const w = parseFloat(weight);
+                if (!w || isNaN(w) || w <= 0) return null;
 
-        if (pr > 0 && pw > 0) {
-          if (pdoMin > 0) {
-            const conc = ((pw * pdoMin * 60) / (1000 * pr));
-            const mcgMin = (pr * conc * 1000) / 60;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/min' };
-          } else if (pdoHr > 0) {
-            const conc = ((pw * pdoHr) / (1000 * pr));
-            const mcgMin = (pr * conc * 1000) / 60;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), activeUnit: 'mcg/kg/hr' };
-          }
-        }
-        return { conc: "0.00", mcgMin: "0.00", activeUnit: '' };
-      }, [s3, weight]);
+                if (selectedDrug.channels) {
+                    return selectedDrug.channels.map(ch => {
+                        const minVal = (ch.min * w).toFixed(2);
+                        const maxVal = (ch.max * w).toFixed(2);
+                        return {
+                            name: ch.name,
+                            min: minVal,
+                            max: maxVal,
+                            unit: ch.unit,
+                            isSingleValue: ch.min === ch.max
+                        };
+                    });
+                } else {
+                    const minVal = (selectedDrug.min * w).toFixed(2);
+                    const maxVal = (selectedDrug.max * w).toFixed(2);
+                    return [{
+                        name: 'ขนาดยาที่แนะนำ',
+                        min: minVal,
+                        max: maxVal,
+                        unit: selectedDrug.unit,
+                        isSingleValue: selectedDrug.min === selectedDrug.max
+                    }];
+                }
+            }, [weight, selectedDrug]);
 
-      useEffect(() => {
-        const pw = parseFloat(weight);
-        if (weightTimerRef.current) clearTimeout(weightTimerRef.current);
+            // Calculate IV Infusion Rate (ml/hr)
+            const calculatedInfusionRate = useMemo(() => {
+                const w = parseFloat(weight);
+                const mg = parseFloat(concDrugAmount);
+                const vol = parseFloat(concFluidVolume);
+                const rate = parseFloat(concDoseRate);
 
-        if (pw > 0) {
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Wt:${pw}kg`;
-          weightTimerRef.current = setTimeout(() => {
-            if (lastSentWeight.current !== logMsg) {
-              lastSentWeight.current = logMsg;
-              const mainMin = s1Res.isMulti ? (s1Res.channels[0]?.min || "-") : s1Res.min;
-              const mainMax = s1Res.isMulti ? (s1Res.channels[0]?.max || "-") : s1Res.max;
-              sendToSheet("Weight Entry", {
-                drug: selectedDrug.name,
-                weight: pw,
-                s1_min: mainMin,
-                s1_max: mainMax,
-                s2_rate: s2Res.mlHr || "-",
-                s3_conc: calculatedConcS2 || "-",
-                type: "Weight Entry",
-                details: logMsg
-              });
-            }
-          }, 5000);
-        }
+                if (!w || !mg || !vol || !rate || w <= 0 || mg <= 0 || vol <= 0 || rate <= 0) return null;
 
-        return () => {
-          if (weightTimerRef.current) clearTimeout(weightTimerRef.current);
-        };
-      }, [weight, selectedDrug, s1Res, s2Res, calculatedConcS2]);
+                // Conc in mcg/ml
+                const concMcgMl = (mg * 1000) / vol;
 
-      useEffect(() => {
-        const pd = parseFloat(s2.drug), ps = parseFloat(s2.sol), pw = parseFloat(weight);
-        const pdoMin = parseFloat(s2.dose);
-        const pdoHr = parseFloat(s2.doseHr);
-        
-        if (s2TimerRef.current) clearTimeout(s2TimerRef.current);
+                let mlHr = 0;
+                if (concDoseUnit === 'mcg/kg/min') {
+                    mlHr = (rate * w * 60) / concMcgMl;
+                } else if (concDoseUnit === 'mcg/kg/hr') {
+                    mlHr = (rate * w) / concMcgMl;
+                } else if (concDoseUnit === 'mg/kg/hr') {
+                    mlHr = (rate * 1000 * w) / concMcgMl;
+                }
 
-        if (pd > 0 && ps > 0 && pw > 0 && (pdoMin > 0 || pdoHr > 0)) {
-          const activeDose = pdoMin > 0 ? `${pdoMin} mcg/kg/min` : `${pdoHr} mcg/kg/hr`;
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Drug:${pd}mg, Sol:${ps}ml, Dose:${activeDose}, Wt:${pw}kg => Rate:${s2Res.mlHr} ml/hr (${s2Res.mcgMin} mcg/min), Conc:${calculatedConcS2} mg/ml`;
-          
-          s2TimerRef.current = setTimeout(() => {
-            if (lastSentS2.current !== logMsg) {
-              lastSentS2.current = logMsg;
-              sendToSheet("Find Rate", {
-                drug: selectedDrug.name,
-                weight: pw,
-                s2_rate: s2Res.mlHr,
-                s3_conc: calculatedConcS2,
-                type: "Find Rate",
-                details: logMsg
-              });
-            }
-          }, 5000);
-        }
+                return mlHr.toFixed(2);
+            }, [weight, concDrugAmount, concFluidVolume, concDoseRate, concDoseUnit]);
 
-        return () => {
-          if (s2TimerRef.current) clearTimeout(s2TimerRef.current);
-        };
-      }, [s2Res, s2, weight, calculatedConcS2, selectedDrug]);
-
-      useEffect(() => {
-        const pr = parseFloat(s3.rate), pw = parseFloat(weight);
-        const pdoMin = parseFloat(s3.dose);
-        const pdoHr = parseFloat(s3.doseHr);
-
-        if (s3TimerRef.current) clearTimeout(s3TimerRef.current);
-
-        if (pr > 0 && pw > 0 && (pdoMin > 0 || pdoHr > 0)) {
-          const activeDose = pdoMin > 0 ? `${pdoMin} mcg/kg/min` : `${pdoHr} mcg/kg/hr`;
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Rate:${pr}ml/hr, Dose:${activeDose}, Wt:${pw}kg => Conc:${s3Res.conc} mg/ml (${s3Res.mcgMin} mcg/min)`;
-          
-          s3TimerRef.current = setTimeout(() => {
-            if (lastSentS3.current !== logMsg) {
-              lastSentS3.current = logMsg;
-              sendToSheet("Find Conc", {
-                drug: selectedDrug.name,
-                weight: pw,
-                s2_rate: pr,
-                s3_conc: s3Res.conc,
-                type: "Find Conc",
-                details: logMsg
-              });
-            }
-          }, 5000);
-        }
-
-        return () => {
-          if (s3TimerRef.current) clearTimeout(s3TimerRef.current);
-        };
-      }, [s3Res, s3, weight, selectedDrug]);
-
-      const handleSendFeedback = () => {
-        if (feedback.trim()) {
-          if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "YOUR_GAS_WEB_APP_URL_HERE") {
-            fetch(GAS_WEB_APP_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: "saveFeedback", payload: { text: feedback } }),
-              redirect: 'follow'
-            }).catch(err => console.error("Feedback API Error:", err));
-          }
-
-          if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run.saveFeedback(feedback);
-          }
-          setFeedback('');
-          showNotification('ส่งข้อเสนอแนะเรียบร้อยแล้ว ขอบพระคุณมากครับ');
-        } else {
-          showNotification('กรุณากรอกข้อความก่อนส่งครับ', 'error');
-        }
-      };
-
-      if (!isLoggedIn) {
-        return (
-          <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
-            {toast.show && (
-              <div className={`fixed top-5 right-5 z-50 p-4 rounded-xl shadow-2xl text-white font-bold fade-in flex items-center gap-2 ${toast.type === 'error' ? 'bg-rose-500' : 'bg-emerald-500'}`}>
-                <span>{toast.type === 'error' ? '⚠️' : '✅'}</span>
-                <span>{toast.message}</span>
-              </div>
-            )}
-            <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center border border-slate-100">
-              <div className="w-32 h-32 bg-pink-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm p-2">
-                <img src={LOGO_URL} className="w-28 h-28 object-contain" alt="Logo" />
-              </div>
-              <h1 className="text-3xl font-extrabold mb-2 text-slate-800 tracking-tight">เข้าสู่ระบบ DosiPedia</h1>
-              <p className="text-sm text-slate-400 mb-6 font-semibold">โรงพยาบาลสงขลา (Songkhla Hospital)</p>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <input 
-                    type="password" 
-                    value={password} 
-                    onChange={e=>setPassword(e.target.value)} 
-                    className="w-full p-4 text-center border-2 border-slate-100 rounded-2xl text-2xl tracking-widest focus:border-pink-500 outline-none transition-all focus:ring-4 focus:ring-pink-50" 
-                    placeholder="••••••" 
-                    autoFocus
-                  />
-                </div>
-                <button className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-pink-500/20 active:scale-98 transition-all">
-                  เข้าสู่ระบบ
-                </button>
-              </form>
-            </div>
-          </div>
-        );
-      }
-
-      return (
-        <div className="h-screen flex flex-col overflow-hidden bg-slate-50">
-          {toast.show && (
-            <div className={`fixed top-5 right-5 z-50 p-4 rounded-xl shadow-2xl text-white font-bold fade-in flex items-center gap-2 ${toast.type === 'error' ? 'bg-rose-500' : 'bg-emerald-500'}`}>
-              <span>{toast.type === 'error' ? '⚠️' : '✅'}</span>
-              <span>{toast.message}</span>
-            </div>
-          )}
-
-          <header className="bg-white border-b border-slate-200 px-4 md:px-8 py-3 flex justify-between items-center shadow-sm shrink-0 z-10">
-            <div className="flex items-center gap-3">
-              <img src={LOGO_URL} className="w-12 h-12 md:w-16 md:h-16 object-contain" alt="Logo" />
-              <div>
-                <h1 className="text-lg md:text-xl font-extrabold text-slate-800 tracking-tighter flex items-center gap-2">
-                  DosiPedia
-                  <span className="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                    รพ.สงขลา
-                  </span>
-                </h1>
-                <p className="text-[10px] text-slate-400 font-bold hidden md:block">PEDIATRIC DOSAGE CALCULATOR</p>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden flex items-center gap-2 px-3 py-2 bg-pink-50 text-pink-600 rounded-xl font-bold text-sm hover:bg-pink-100 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-              <span>{selectedDrug.name}</span>
-            </button>
-          </header>
-
-          <div className="flex flex-1 overflow-hidden relative">
-            <aside className="w-72 bg-white border-r border-slate-200 flex flex-col shrink-0 hidden lg:flex">
-              <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    placeholder="🔍 ค้นหาชื่อยา..." 
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 transition-all font-medium"
-                  />
-                </div>
-              </div>
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1">
-                {filteredDrugs.length > 0 ? (
-                  filteredDrugs.map(d => (
-                    <button 
-                      key={d.name} 
-                      onClick={() => setSelectedDrug(d)} 
-                      className={`w-full text-left px-4 py-3 rounded-xl text-[13px] font-bold transition-all flex items-center justify-between ${
-                        selectedDrug.name === d.name 
-                          ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md shadow-pink-500/10 scale-[1.02]' 
-                          : 'hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-100'
-                      }`}
-                    >
-                      <span>{d.name}</span>
-                      {selectedDrug.name === d.name && (
-                        <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded">Active</span>
-                      )}
-                    </button>
-                  ))
-                ) : (
-                  <div className="text-center text-slate-400 py-8 text-xs font-semibold">ไม่พบรายชื่อยาที่ค้นหา</div>
-                )}
-              </div>
-            </aside>
-
-            {isMobileMenuOpen && (
-              <div className="fixed inset-0 bg-slate-900/40 z-40 lg:hidden" onClick={() => setIsMobileMenuOpen(false)}>
-                <div className="absolute top-0 left-0 w-80 h-full bg-white shadow-2xl flex flex-col p-4 fade-in" onClick={e => e.stopPropagation()}>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-extrabold text-slate-800">เลือกรายชื่อยา</span>
-                    <button onClick={() => setIsMobileMenuOpen(false)} className="text-slate-400 hover:text-slate-600">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="mb-3">
-                    <input 
-                      type="text" 
-                      placeholder="🔍 ค้นหาชื่อยา..." 
-                      value={searchTerm}
-                      onChange={e => setSearchTerm(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-pink-500 font-medium"
-                    />
-                  </div>
-                  <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1">
-                    {filteredDrugs.map(d => (
-                      <button 
-                        key={d.name} 
-                        onClick={() => { setSelectedDrug(d); setIsMobileMenuOpen(false); }} 
-                        className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all ${
-                          selectedDrug.name === d.name ? 'bg-pink-600 text-white shadow-md' : 'hover:bg-slate-50 text-slate-600'
-                        }`}
-                      >
-                        {d.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6 bg-slate-50">
-              <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 pb-12">
-                <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col fade-in">
-                  <div className="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-4 text-white font-bold flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                    <span className="text-xs sm:text-sm uppercase tracking-wider font-extrabold">1. คำนวณขนาดยาตามน้ำหนัก (Dose Range)</span>
-                    <span className="text-[11px] bg-white/20 px-3 py-1 rounded-full text-white font-bold max-w-max">
-                      {selectedDrug.name}
-                    </span>
-                  </div>
-                  <div className="p-6 md:p-8 space-y-6 flex-1">
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-400 uppercase mb-2 block ml-1 tracking-wider">
-                        น้ำหนักตัวผู้ป่วย (Weight - KG)
-                      </label>
-                      <input 
-                        type="number" 
-                        value={weight} 
-                        onChange={e=>setWeight(e.target.value)} 
-                        className="w-full text-4xl md:text-5xl font-black p-5 md:p-6 bg-slate-100 rounded-3xl text-center outline-none focus:ring-4 ring-pink-100 border-2 border-transparent focus:border-pink-500 transition-all text-slate-800 shadow-inner" 
-                        placeholder="0.0" 
-                        min="0"
-                        step="any"
-                      />
-                    </div>
-                    
-                    <div className="bg-slate-900 text-white p-6 md:p-8 rounded-2xl text-center shadow-2xl relative overflow-hidden space-y-4">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                        <img src={LOGO_URL} className="w-28 h-28 object-contain" alt="background logo" />
-                      </div>
-                      
-                      {s1Res.isMulti ? (
-                        <div className="space-y-4">
-                          {s1Res.channels.map((ch, idx) => (
-                            <div key={idx} className={`${idx > 0 ? 'border-t border-slate-800 pt-4' : ''}`}>
-                              <div className="text-[11px] text-pink-300 font-extrabold uppercase mb-1 tracking-wider">{ch.title}</div>
-                              <div className="text-2xl md:text-3xl font-black tracking-tight text-white">{ch.min} - {ch.max}</div>
-                              <div className="text-[10px] text-pink-400 mt-1 uppercase font-extrabold tracking-widest bg-pink-950/40 px-3 py-0.5 rounded-full inline-block">
-                                หน่วยยา: {ch.unit}
-                              </div>
-                              {ch.hasAlt && (
-                                <div className="mt-2">
-                                  <div className="text-[10px] text-teal-300 font-bold uppercase tracking-wider">ขนาดยาหน่วยพิเศษ</div>
-                                  <div className="text-xl font-extrabold text-teal-400">{ch.altMin} - {ch.altMax} {ch.altUnit}</div>
+            if (!isLoggedIn) {
+                return (
+                    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+                        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full text-center border border-slate-200">
+                            <div className="flex justify-center mb-4">
+                                <img src={LOGO_URL} alt="DosiPedia Logo" className="h-28 object-contain" />
+                            </div>
+                            <h1 className="text-2xl font-bold text-slate-800 mb-1">เข้าสู่ระบบ DosiPedia</h1>
+                            <p className="text-sm text-slate-500 mb-6">โรงพยาบาลสงขلا (Songkhla Hospital)</p>
+                            
+                            <form onSubmit={handleLogin} className="space-y-4">
+                                <div>
+                                    <input 
+                                        type="password"
+                                        placeholder="••••••"
+                                        value={pin}
+                                        onChange={(e) => setPin(e.target.value)}
+                                        className="w-full text-center text-2xl tracking-widest py-3 border border-pink-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                        maxLength="6"
+                                        autoFocus
+                                    />
                                 </div>
-                              )}
+                                {loginError && <p className="text-red-500 text-xs">{loginError}</p>}
+                                <button 
+                                    type="submit"
+                                    className="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 rounded-xl shadow-lg shadow-pink-200 transition-all active:scale-98"
+                                >
+                                    เข้าสู่ระบบ
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen pb-16">
+                    {/* Top Header */}
+                    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+                        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <img src={LOGO_URL} alt="Logo" className="h-10 w-auto object-contain" />
+                                <div>
+                                    <h1 className="text-lg font-bold text-slate-800 leading-none">DosiPedia</h1>
+                                    <span className="text-xs text-pink-600 font-medium">Songkhla Hospital</span>
+                                </div>
                             </div>
-                          ))}
+                            <button 
+                                onClick={() => setIsLoggedIn(false)}
+                                className="text-xs text-slate-400 hover:text-slate-600 bg-slate-100 px-2.5 py-1.5 rounded-lg"
+                            >
+                                ออกจากระบบ
+                            </button>
                         </div>
-                      ) : (
-                        <div>
-                          <div className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-widest">ช่วงขนาดยาที่แนะนำ (Main Dose Range)</div>
-                          <div className="text-3xl md:text-4xl font-black tracking-tight text-white">{s1Res.min} - {s1Res.max}</div>
-                          <div className="text-[10px] text-pink-400 mt-1 uppercase font-extrabold tracking-widest bg-pink-950/40 px-3 py-1 rounded-full inline-block">
-                            หน่วยยา: {s1Res.unit}
-                          </div>
+                    </header>
 
-                          {s1Res.hasAlt && (
-                            <div className="border-t border-slate-800 pt-4 mt-3">
-                              <div className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-widest">ขนาดยาแนะนำหน่วยพิเศษ (Alternative Dose Range)</div>
-                              <div className="text-2xl md:text-3xl font-black tracking-tight text-teal-400">{s1Res.altMin} - {s1Res.altMax}</div>
-                              <div className="text-[10px] text-teal-400 mt-1 uppercase font-extrabold tracking-widest bg-teal-950/40 px-3 py-1 rounded-full inline-block">
-                                หน่วยยา: {s1Res.altUnit}
-                              </div>
+                    <main className="max-w-md mx-auto p-4 space-y-4">
+                        {/* Weight Input Box */}
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                ⚖️ น้ำหนักตัวผู้ป่วย (Patient Weight)
+                            </label>
+                            <div className="relative flex items-center">
+                                <input 
+                                    type="number" 
+                                    step="0.01"
+                                    placeholder="ระบุน้ำหนัก..." 
+                                    value={weight}
+                                    onChange={(e) => setWeight(e.target.value)}
+                                    className="w-full text-xl font-bold text-pink-600 bg-pink-50 border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                />
+                                <span className="absolute right-4 font-bold text-slate-400">kg</span>
                             </div>
-                          )}
                         </div>
-                      )}
-                    </div>
-                    
-                    <div className="bg-pink-50/40 p-5 rounded-2xl text-slate-700 info-text border border-pink-100 shadow-sm leading-relaxed">
-                      <h4 className="font-extrabold text-pink-700 text-sm mb-2 flex items-center gap-1.5">
-                        💡 รายละเอียดและวิธีใช้ยาสำหรับ {selectedDrug.name}
-                      </h4>
-                      <p className="text-slate-600 font-medium whitespace-pre-wrap">{selectedDrug.info}</p>
-                    </div>
-                  </div>
+
+                        {/* Drug Selector */}
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                💊 เลือกรายการยา (Select Drug)
+                            </label>
+                            <select 
+                                value={selectedDrugId}
+                                onChange={(e) => setSelectedDrugId(e.target.value)}
+                                className="w-full text-base font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            >
+                                {DRUG_DATA.map(d => (
+                                    <option key={d.id} value={d.id}>{d.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="flex bg-slate-200 p-1 rounded-xl">
+                            <button 
+                                onClick={() => setActiveTab('rate')}
+                                className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'rate' ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-600'}`}
+                            >
+                                คำนวณขนาดยา (Dose Rate)
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('conc')}
+                                className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'conc' ? 'bg-white text-pink-600 shadow-sm' : 'text-slate-600'}`}
+                            >
+                                คำนวณความเข้มข้น/Rate (Infusion)
+                            </button>
+                        </div>
+
+                        {/* TAB 1: Dose Rate Calculation */}
+                        {activeTab === 'rate' && (
+                            <div className="space-y-4 animate-fadeIn">
+                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-pink-100">
+                                    <h3 className="text-sm font-bold text-slate-700 border-b pb-2 mb-3">
+                                        ผลการคำนวณขนาดยา ({selectedDrug.name})
+                                    </h3>
+
+                                    {!weight ? (
+                                        <p className="text-center py-6 text-slate-400 text-sm">กรุณากรอกน้ำหนักตัวเพื่อคำนวณ</p>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {rateResults && rateResults.map((res, idx) => (
+                                                <div key={idx} className="bg-pink-50/70 p-3.5 rounded-xl border border-pink-100">
+                                                    <div className="text-xs font-semibold text-pink-700 mb-1">{res.name}</div>
+                                                    <div className="text-2xl font-extrabold text-pink-600">
+                                                        {res.isSingleValue ? res.min : `${res.min} - ${res.max}`}
+                                                        <span className="text-sm font-normal text-slate-600 ml-2">{res.unit}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 2: Concentration & Infusion Rate Calculator */}
+                        {activeTab === 'conc' && (
+                            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4 animate-fadeIn">
+                                <h3 className="text-sm font-bold text-slate-700 border-b pb-2">
+                                    คำนวณอัตราการหยดยา (Infusion Rate)
+                                </h3>
+
+                                <div className="space-y-3">
+                                    <div>
+                                        <label className="text-xs font-semibold text-slate-600 mb-1 block">ปริมาณเนื้อยา (Drug Amount in mg)</label>
+                                        <input 
+                                            type="number" 
+                                            placeholder="เช่น 250" 
+                                            value={concDrugAmount}
+                                            onChange={(e) => setConcDrugAmount(e.target.value)}
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-semibold text-slate-600 mb-1 block">ปริมาตรสารสารละลายทั้งหมด (Total Volume in ml)</label>
+                                        <input 
+                                            type="number" 
+                                            placeholder="เช่น 50" 
+                                            value={concFluidVolume}
+                                            onChange={(e) => setConcFluidVolume(e.target.value)}
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-600 mb-1 block">ขนาดยาที่ต้องการสั่ง</label>
+                                            <input 
+                                                type="number" 
+                                                placeholder="เช่น 5" 
+                                                value={concDoseRate}
+                                                onChange={(e) => setConcDoseRate(e.target.value)}
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-600 mb-1 block">หน่วย (Unit)</label>
+                                            <select 
+                                                value={concDoseUnit}
+                                                onChange={(e) => setConcDoseUnit(e.target.value)}
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                            >
+                                                <option value="mcg/kg/min">mcg/kg/min</option>
+                                                <option value="mcg/kg/hr">mcg/kg/hr</option>
+                                                <option value="mg/kg/hr">mg/kg/hr</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-slate-900 text-white p-4 rounded-xl mt-4">
+                                    <div className="text-xs text-slate-400">อัตราการบริหารยาทาง IV (Infusion Rate)</div>
+                                    <div className="text-3xl font-extrabold text-pink-400 mt-1">
+                                        {calculatedInfusionRate ? calculatedInfusionRate : '0.00'}
+                                        <span className="text-sm font-normal text-slate-300 ml-2">ml/hr</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Drug Detailed Info Card */}
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                            <h3 className="text-sm font-bold text-slate-700 border-b pb-2 mb-3">
+                                📋 ข้อมูลเพิ่มเติมและการบริหารยา
+                            </h3>
+                            <div className="text-xs text-slate-600 leading-relaxed whitespace-pre-line bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                {selectedDrug.info}
+                            </div>
+                        </div>
+
+                        {/* Feedback Box */}
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+                            <label className="text-xs font-semibold text-slate-600 block">💬 ข้อเสนอแนะ / แจ้งปัญหาการใช้งาน</label>
+                            <textarea 
+                                rows="2"
+                                placeholder="พิมพ์ข้อความที่นี่..."
+                                value={feedbackText}
+                                onChange={(e) => setFeedbackText(e.target.value)}
+                                className="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            ></textarea>
+                            <div className="flex justify-between items-center">
+                                {feedbackSent ? (
+                                    <span className="text-xs text-green-600 font-medium">✓ ส่งข้อความเรียบร้อยแล้ว</span>
+                                ) : <span />}
+                                <button 
+                                    onClick={handleSendFeedback}
+                                    className="bg-pink-500 hover:bg-pink-600 text-white text-xs px-4 py-2 rounded-lg font-medium transition-all"
+                                >
+                                    ส่งข้อความ
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Footer Section */}
+                    <footer className="max-w-md mx-auto px-4 py-4 text-slate-400 text-[11px] leading-tight space-y-1">
+                        <div>Developed by Chartkawee Jehsaree © Version 1.0 (24/7/26)</div>
+                        <div>Songkhla Hospital</div>
+                    </footer>
                 </div>
+            );
+        }
 
-                <div className="space-y-6">
-                  <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-100">
-                    <div className="bg-blue-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider flex justify-between items-center">
-                      <span>2. คำนวณหาอัตราการไหล (Rate - ml/hr)</span>
-                      {calculatedConcS2 !== "0.00" && (
-                        <span className="bg-blue-700 text-white px-2.5 py-0.5 rounded-lg text-[10px] font-black">
-                          ความเข้มข้น: {calculatedConcS2} mg/ml
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="p-6">
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">ตัวยา (mg)</label>
-                          <input 
-                            type="number" 
-                            value={s2.drug} 
-                            onChange={e=>setS2({...s2, drug:e.target.value})} 
-                            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-extrabold text-slate-700 focus:border-blue-500 focus:bg-white outline-none" 
-                            placeholder="mg"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">สารละลาย (ml)</label>
-                          <input 
-                            type="number" 
-                            value={s2.sol} 
-                            onChange={e=>setS2({...s2, sol:e.target.value})} 
-                            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-extrabold text-slate-700 focus:border-blue-500 focus:bg-white outline-none" 
-                            placeholder="ml"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                          <label className="text-[10px] font-extrabold text-blue-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/min)</label>
-                          <input 
-                            type="number" 
-                            value={s2.dose} 
-                            onChange={e=>setS2({...s2, dose:e.target.value, doseHr:''})} 
-                            disabled={s2.doseHr !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s2.doseHr !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-blue-50 border-blue-200 text-blue-700 focus:border-blue-500 focus:bg-white outline-none'
-                            }`}
-                            placeholder="กรอกช่องนี้"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-extrabold text-indigo-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/hr)</label>
-                          <input 
-                            type="number" 
-                            value={s2.doseHr} 
-                            onChange={e=>setS2({...s2, doseHr:e.target.value, dose:''})} 
-                            disabled={s2.dose !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s2.dose !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-indigo-50 border-indigo-200 text-indigo-700 focus:border-indigo-500 focus:bg-white outline-none'
-                            }`}
-                            placeholder="หรือช่องนี้"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-2 shadow-lg">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ความเร็ว Infusion Pump:</span>
-                          <span className="text-3xl font-black">{s2Res.mlHr} <span className="text-xs font-bold opacity-80">ml/hr</span></span>
-                        </div>
-                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดไมโครกรัม:</span>
-                          <span className="text-2xl font-black text-blue-200">{s2Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-200">
-                    <div className="bg-emerald-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider">
-                      3. คำนวณหาความเข้มข้นของยา (Conc. - mg/ml)
-                    </div>
-                    
-                    <div className="p-6">
-                      <div className="mb-4">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">อัตราที่ให้เครื่องเดิน (ml/hr)</label>
-                        <input 
-                          type="number" 
-                          value={s3.rate} 
-                          onChange={e=>setS3({...s3, rate:e.target.value})} 
-                          className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-extrabold text-slate-700 focus:border-emerald-500 focus:bg-white outline-none" 
-                          placeholder="ml/hr"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                          <label className="text-[10px] font-extrabold text-emerald-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/min)</label>
-                          <input 
-                            type="number" 
-                            value={s3.dose} 
-                            onChange={e=>setS3({...s3, dose:e.target.value, doseHr:''})} 
-                            disabled={s3.doseHr !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s3.doseHr !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700 focus:border-emerald-500 focus:bg-white outline-none'
-                            }`}
-                            placeholder="กรอกช่องนี้"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-extrabold text-teal-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/hr)</label>
-                          <input 
-                            type="number" 
-                            value={s3.doseHr} 
-                            onChange={e=>setS3({...s3, doseHr:e.target.value, dose:''})} 
-                            disabled={s3.dose !== ''}
-                            className={`w-full p-3 border rounded-xl text-center font-black ${
-                              s3.dose !== '' ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-teal-50 border-teal-200 text-teal-700 focus:border-teal-500 focus:bg-white outline-none'
-                            }`}
-                            placeholder="หรือช่องนี้"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-2 shadow-lg">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ความเข้มข้นของยาในขวด:</span>
-                          <span className="text-3xl font-black">{s3Res.conc} <span className="text-xs font-bold opacity-80">mg/ml</span></span>
-                        </div>
-                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดไมโครกรัม:</span>
-                          <span className="text-2xl font-black text-emerald-200">{s3Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 fade-in animate-delay-300">
-                    <h4 className="text-xs font-bold uppercase text-slate-400 mb-3 ml-1 tracking-wider">ข้อเสนอแนะ / แจ้งปัญหาการใช้งาน</h4>
-                    <textarea 
-                      value={feedback} 
-                      onChange={e=>setFeedback(e.target.value)} 
-                      className="w-full p-4 bg-slate-50 rounded-2xl text-sm h-20 border border-slate-200 focus:border-slate-400 focus:bg-white outline-none transition-all resize-none font-medium text-slate-600" 
-                      placeholder="เขียนรายละเอียดข้อเสนอแนะหรือปัญหาที่นี่..." 
-                    />
-                    <button 
-                      onClick={handleSendFeedback} 
-                      className="w-full mt-3 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-extrabold active:scale-98 transition-all tracking-wide uppercase shadow-sm"
-                    >
-                      ส่งรายงาน / ข้อเสนอแนะ
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </main>
-          </div>
-
-          <footer className="bg-white border-t border-slate-200 px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-3 shrink-0 z-10 shadow-inner">
-            <div className="text-center md:text-left">
-              <p className="text-[11px] font-medium text-slate-700 tracking-tight">
-                Developed by Chartkawee Jehsaree &copy; <span className="text-slate-500 font-semibold ml-1">Version 1.0 (24/7/26)</span>
-              </p>
-              <p className="text-[10px] text-pink-600 font-bold uppercase tracking-widest leading-none mt-1">
-                Songkhla Hospital
-              </p>
-            </div>
-            <div className="flex items-center gap-4 bg-slate-900 text-white px-4 md:px-5 py-2.5 rounded-xl shadow-lg">
-              <div className="bg-pink-500 p-2 rounded-lg shadow-md shadow-pink-500/20">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  <line x1="11" y1="8" x2="11" y2="14"></line>
-                  <line x1="8" y1="11" x2="14" y2="11"></line>
-                </svg>
-              </div>
-              <div className="text-[11px] md:text-xs font-black leading-tight uppercase tracking-tight">
-                ปรับขนาดหน้าจอ: <span className="text-pink-400 ml-1 underline decoration-2 underline-offset-4">กด Ctrl และ + หรือ -</span>
-              </div>
-            </div>
-          </footer>
-        </div>
-      );
-    };
-
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
