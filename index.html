@@ -42,13 +42,37 @@
 <body class="bg-slate-50 text-slate-800">
   <div id="root"></div>
 
-  <!-- Register Service Worker -->
+  <!-- Register Service Worker (Auto-Update Version) -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('Service Worker Registered!', reg))
-          .catch(err => console.error('Service Worker Registration Failed!', err));
+        navigator.serviceWorker.register('/sw.js').then((registration) => {
+          
+          // 1. สั่งตรวจสอบอัปเดตไฟล์ sw.js ทุกครั้งที่ผู้ใช้เข้าเว็บ
+          registration.update();
+
+          // 2. ถ้าเจอ Service Worker ตัวใหม่กำลังติดตั้ง
+          registration.onupdatefound = () => {
+            const installingWorker = registration.installing;
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  // ส่งสัญญาณบอก sw.js ให้สลับไปใช้เวอร์ชันใหม่ทันที
+                  installingWorker.postMessage({ action: 'skipWaiting' });
+                }
+              }
+            };
+          };
+        }).catch(err => console.error('Service Worker Registration Failed!', err));
+
+        // 3. เมื่อ Service Worker เวอร์ชันใหม่เริ่มทำงาน สั่ง Reload หน้าเว็บ 1 ครั้งอัตโนมัติ
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       });
     }
   </script>
