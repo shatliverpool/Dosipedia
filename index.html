@@ -193,12 +193,13 @@
     ].sort((a, b) => a.name.localeCompare(b.name));
 
     const App = () => {
-      const [isLoggedIn, setIsLoggedIn] = useState(false);
-      const [password, setPassword] = useState('');
       const [weight, setWeight] = useState('');
       const [selectedDrug, setSelectedDrug] = useState(DRUG_LIST[0]);
       
-      const [s2, setS2] = useState({ drug: '', sol: '', dose: '', doseHr: '' });
+      // ส่วนที่ 2: เปลี่ยนเป็นคำนวณหา Dose จาก drug (mg), sol (ml), rate (ml/hr)
+      const [s2, setS2] = useState({ drug: '', sol: '', rate: '' });
+      
+      // ส่วนที่ 3: คำนวณหา Conc จาก rate (ml/hr), dose (mcg/kg/min หรือ mcg/kg/hr)
       const [s3, setS3] = useState({ rate: '', dose: '', doseHr: '' });
       
       const [feedback, setFeedback] = useState('');
@@ -217,16 +218,6 @@
       const showNotification = (message, type = 'success') => {
         setToast({ show: true, message, type });
         setTimeout(() => setToast({ show: false, message: '', type: '' }), 4000);
-      };
-
-      const handleLogin = (e) => {
-        e.preventDefault();
-        if (password === '123456') {
-          setIsLoggedIn(true);
-          showNotification('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับครับ', 'success');
-        } else {
-          showNotification('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง', 'error');
-        }
       };
 
       const sendToSheet = (type, details) => {
@@ -314,6 +305,7 @@
         return { isMulti: false, min: mainMin, max: mainMax, unit: selectedDrug.unit, hasAlt: false, altMin: "0.00", altMax: "0.00" };
       }, [weight, selectedDrug]);
 
+      // ความเข้มข้นส่วนที่ 2
       const calculatedConcS2 = useMemo(() => {
         const pd = parseFloat(s2.drug);
         const ps = parseFloat(s2.sol);
@@ -323,28 +315,35 @@
         return "0.00";
       }, [s2.drug, s2.sol]);
 
+      // คำนวณส่วนที่ 2: หา Dose (mcg/kg/min & mcg/kg/hr) และ อัตราเร็วขนาดยา (mcg/min & mcg/hr)
       const s2Res = useMemo(() => {
-        const pd = parseFloat(s2.drug), ps = parseFloat(s2.sol), pw = parseFloat(weight);
-        const pdoMin = parseFloat(s2.dose);
-        const pdoHr = parseFloat(s2.doseHr);
+        const pd = parseFloat(s2.drug);
+        const ps = parseFloat(s2.sol);
+        const pr = parseFloat(s2.rate);
+        const pw = parseFloat(weight);
         const conc = parseFloat(calculatedConcS2);
 
-        if (conc > 0 && pw > 0) {
-          if (pdoMin > 0) {
-            const rateMlHr = (((pdoMin / 1000) * pw) / conc) * 60;
-            const mcgMin = (rateMlHr * conc * 1000) / 60;
-            const mcgHr = rateMlHr * conc * 1000;
-            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/min' };
-          } else if (pdoHr > 0) {
-            const rateMlHr = ((pdoHr / 1000) * pw) / conc;
-            const mcgMin = (rateMlHr * conc * 1000) / 60;
-            const mcgHr = rateMlHr * conc * 1000;
-            return { mlHr: rateMlHr.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/hr' };
-          }
+        if (conc > 0 && pr > 0 && pw > 0) {
+          // Dose (mcg/kg/min) = (rate * conc * 1000) / (60 * weight)
+          const doseMin = (pr * conc * 1000) / (60 * pw);
+          // Dose (mcg/kg/hr) = (rate * conc * 1000) / weight
+          const doseHr = (pr * conc * 1000) / pw;
+          
+          // อัตราเร็วขนาดยา
+          const mcgMin = (pr * conc * 1000) / 60;
+          const mcgHr = pr * conc * 1000;
+
+          return {
+            doseMin: doseMin.toFixed(2),
+            doseHr: doseHr.toFixed(2),
+            mcgMin: mcgMin.toFixed(2),
+            mcgHr: mcgHr.toFixed(2)
+          };
         }
-        return { mlHr: "0.00", mcgMin: "0.00", mcgHr: "0.00", activeUnit: '' };
+        return { doseMin: "0.00", doseHr: "0.00", mcgMin: "0.00", mcgHr: "0.00" };
       }, [s2, weight, calculatedConcS2]);
 
+      // คำนวณส่วนที่ 3: หา Conc
       const s3Res = useMemo(() => {
         const pr = parseFloat(s3.rate), pw = parseFloat(weight);
         const pdoMin = parseFloat(s3.dose);
@@ -355,18 +354,18 @@
             const conc = ((pw * pdoMin * 60) / (1000 * pr));
             const mcgMin = (pr * conc * 1000) / 60;
             const mcgHr = pr * conc * 1000;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/min' };
+            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2) };
           } else if (pdoHr > 0) {
             const conc = ((pw * pdoHr) / (1000 * pr));
             const mcgMin = (pr * conc * 1000) / 60;
             const mcgHr = pr * conc * 1000;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2), activeUnit: 'mcg/kg/hr' };
+            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2) };
           }
         }
-        return { conc: "0.00", mcgMin: "0.00", mcgHr: "0.00", activeUnit: '' };
+        return { conc: "0.00", mcgMin: "0.00", mcgHr: "0.00" };
       }, [s3, weight]);
 
-      // ⏱️ ปรับเวลาค้างข้อมูลเป็น 10 วินาที
+      // ⏱️ ส่งข้อมูลเมื่อ user ค้างข้อมูลไว้ 10 วินาที
       useEffect(() => {
         const pw = parseFloat(weight);
         if (weightTimerRef.current) clearTimeout(weightTimerRef.current);
@@ -383,7 +382,7 @@
                 weight: pw,
                 s1_min: mainMin,
                 s1_max: mainMax,
-                s2_rate: s2Res.mlHr || "-",
+                s2_rate: s2.rate || "-",
                 s3_conc: calculatedConcS2 || "-",
                 type: "Weight Entry",
                 details: logMsg
@@ -395,28 +394,24 @@
         return () => {
           if (weightTimerRef.current) clearTimeout(weightTimerRef.current);
         };
-      }, [weight, selectedDrug, s1Res, s2Res, calculatedConcS2]);
+      }, [weight, selectedDrug, s1Res, s2.rate, calculatedConcS2]);
 
       useEffect(() => {
-        const pd = parseFloat(s2.drug), ps = parseFloat(s2.sol), pw = parseFloat(weight);
-        const pdoMin = parseFloat(s2.dose);
-        const pdoHr = parseFloat(s2.doseHr);
-        
+        const pd = parseFloat(s2.drug), ps = parseFloat(s2.sol), pr = parseFloat(s2.rate), pw = parseFloat(weight);
         if (s2TimerRef.current) clearTimeout(s2TimerRef.current);
 
-        if (pd > 0 && ps > 0 && pw > 0 && (pdoMin > 0 || pdoHr > 0)) {
-          const activeDose = pdoMin > 0 ? `${pdoMin} mcg/kg/min` : `${pdoHr} mcg/kg/hr`;
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Drug:${pd}mg, Sol:${ps}ml, Dose:${activeDose}, Wt:${pw}kg => Rate:${s2Res.mlHr} ml/hr (${s2Res.mcgMin} mcg/min, ${s2Res.mcgHr} mcg/hr), Conc:${calculatedConcS2} mg/ml`;
+        if (pd > 0 && ps > 0 && pr > 0 && pw > 0) {
+          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Drug:${pd}mg, Sol:${ps}ml, Rate:${pr}ml/hr, Wt:${pw}kg => Dose:${s2Res.doseMin} mcg/kg/min (${s2Res.doseHr} mcg/kg/hr), RateDose:${s2Res.mcgMin} mcg/min (${s2Res.mcgHr} mcg/hr)`;
           
           s2TimerRef.current = setTimeout(() => {
             if (lastSentS2.current !== logMsg) {
               lastSentS2.current = logMsg;
-              sendToSheet("Find Rate", {
+              sendToSheet("Find Dose", {
                 drug: selectedDrug.name,
                 weight: pw,
-                s2_rate: s2Res.mlHr,
+                s2_rate: pr,
                 s3_conc: calculatedConcS2,
-                type: "Find Rate",
+                type: "Find Dose",
                 details: logMsg
               });
             }
@@ -479,41 +474,6 @@
           showNotification('กรุณากรอกข้อความก่อนส่งครับ', 'error');
         }
       };
-
-      if (!isLoggedIn) {
-        return (
-          <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
-            {toast.show && (
-              <div className={`fixed top-5 right-5 z-50 p-4 rounded-xl shadow-2xl text-white font-bold fade-in flex items-center gap-2 ${toast.type === 'error' ? 'bg-rose-500' : 'bg-emerald-500'}`}>
-                <span>{toast.type === 'error' ? '⚠️' : '✅'}</span>
-                <span>{toast.message}</span>
-              </div>
-            )}
-            <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center border border-slate-100">
-              <div className="w-32 h-32 bg-pink-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm p-2">
-                <img src={LOGO_URL} className="w-28 h-28 object-contain" alt="Logo" />
-              </div>
-              <h1 className="text-3xl font-extrabold mb-2 text-slate-800 tracking-tight">เข้าสู่ระบบ DosiPedia</h1>
-              <p className="text-sm text-slate-400 mb-6 font-semibold">PEDIATRIC DOSAGE CALCULATOR</p>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <input 
-                    type="password" 
-                    value={password} 
-                    onChange={e=>setPassword(e.target.value)} 
-                    className="w-full p-4 text-center border-2 border-slate-100 rounded-2xl text-2xl tracking-widest focus:border-pink-500 outline-none transition-all focus:ring-4 focus:ring-pink-50" 
-                    placeholder="••••••" 
-                    autoFocus
-                  />
-                </div>
-                <button className="w-full py-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-pink-500/20 active:scale-98 transition-all">
-                  เข้าสู่ระบบ
-                </button>
-              </form>
-            </div>
-          </div>
-        );
-      }
 
       return (
         <div className="h-screen flex flex-col overflow-hidden bg-slate-50">
@@ -622,6 +582,8 @@
 
             <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6 bg-slate-50">
               <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 pb-12">
+                
+                {/* 1. คำนวณขนาดยาตามน้ำหนัก */}
                 <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col fade-in">
                   <div className="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-4 text-white font-bold flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <span className="text-xs sm:text-sm uppercase tracking-wider font-extrabold">1. คำนวณขนาดยาตามน้ำหนัก (Dose Range)</span>
@@ -699,10 +661,11 @@
                 </div>
 
                 <div className="space-y-6">
-                  {/* 2. คำนวณหาอัตราการไหล (Rate) */}
+                  
+                  {/* 2. คำนวณหา dose ยา */}
                   <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-100">
                     <div className="bg-blue-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider flex justify-between items-center">
-                      <span>2. คำนวณหาอัตราการไหล (Rate - ml/hr)</span>
+                      <span>2. คำนวณหา dose ยา</span>
                       {calculatedConcS2 !== "0.00" && (
                         <span className="bg-blue-700 text-white px-2.5 py-0.5 rounded-lg text-[10px] font-black">
                           ความเข้มข้น: {calculatedConcS2} mg/ml
@@ -711,7 +674,8 @@
                     </div>
                     
                     <div className="p-6">
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      {/* กรอก 3 ช่อง: ตัวยา (mg), สารละลาย (ml), อัตราการให้ยา (ml/hr) */}
+                      <div className="grid grid-cols-3 gap-3 mb-6">
                         <div>
                           <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">ตัวยา (mg)</label>
                           <input 
@@ -732,40 +696,31 @@
                             placeholder="ml"
                           />
                         </div>
-                      </div>
-
-                      {/* ⚡ Auto-clear ระหว่างช่อง dose / doseHr */}
-                      <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
-                          <label className="text-[10px] font-extrabold text-blue-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/min)</label>
+                          <label className="text-[10px] font-bold text-blue-600 uppercase mb-1.5 block">อัตราการให้ยา (ml/hr)</label>
                           <input 
                             type="number" 
-                            value={s2.dose} 
-                            onChange={e => setS2({ ...s2, dose: e.target.value, doseHr: '' })} 
-                            className="w-full p-3 border rounded-xl text-center font-black bg-blue-50 border-blue-200 text-blue-700 focus:border-blue-500 focus:bg-white outline-none"
-                            placeholder="กรอกช่องนี้"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-extrabold text-indigo-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/hr)</label>
-                          <input 
-                            type="number" 
-                            value={s2.doseHr} 
-                            onChange={e => setS2({ ...s2, doseHr: e.target.value, dose: '' })} 
-                            className="w-full p-3 border rounded-xl text-center font-black bg-indigo-50 border-indigo-200 text-indigo-700 focus:border-indigo-500 focus:bg-white outline-none"
-                            placeholder="หรือช่องนี้"
+                            value={s2.rate} 
+                            onChange={e=>setS2({...s2, rate:e.target.value})} 
+                            className="w-full p-3 bg-blue-50 border border-blue-200 rounded-xl text-center font-extrabold text-blue-700 focus:border-blue-500 focus:bg-white outline-none" 
+                            placeholder="ml/hr"
                           />
                         </div>
                       </div>
 
-                      {/* 💡 เพิ่มการแสดงผลทั้ง mcg/min และ mcg/hr */}
+                      {/* แสดงผลลัพธ์ Dose (mcg/kg/min & mcg/kg/hr) และ อัตราเร็วขนาดยา (mcg/min & mcg/hr) */}
                       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-3 shadow-lg">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ความเร็ว Infusion Pump:</span>
-                          <span className="text-3xl font-black">{s2Res.mlHr} <span className="text-xs font-bold opacity-80">ml/hr</span></span>
+                        <div className="flex flex-col space-y-1">
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">Dose ยาที่คำนวณได้:</span>
+                          <span className="text-2xl md:text-3xl font-black text-white">
+                            {s2Res.doseMin} <span className="text-xs font-bold opacity-80">mcg/kg/min</span>
+                          </span>
+                          <span className="text-xl md:text-2xl font-black text-indigo-200">
+                            {s2Res.doseHr} <span className="text-xs font-bold opacity-80">mcg/kg/hr</span>
+                          </span>
                         </div>
                         <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดอัตรา:</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">อัตราเร็วขนาดยา:</span>
                           <span className="text-lg font-black text-blue-100">{s2Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
                           <span className="text-lg font-black text-indigo-200">{s2Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
                         </div>
@@ -791,7 +746,7 @@
                         />
                       </div>
 
-                      {/* ⚡ Auto-clear ระหว่างช่อง dose / doseHr */}
+                      {/* Auto-clear ระหว่างช่อง dose / doseHr */}
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
                           <label className="text-[10px] font-extrabold text-emerald-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/min)</label>
@@ -815,14 +770,13 @@
                         </div>
                       </div>
 
-                      {/* 💡 เพิ่มการแสดงผลทั้ง mcg/min และ mcg/hr */}
                       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-3 shadow-lg">
                         <div className="flex flex-col">
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ความเข้มข้นของยาในขวด:</span>
                           <span className="text-3xl font-black">{s3Res.conc} <span className="text-xs font-bold opacity-80">mg/ml</span></span>
                         </div>
                         <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นความเร็วขนาดอัตรา:</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">คิดเป็นอัตราเร็วขนาดยา:</span>
                           <span className="text-lg font-black text-emerald-100">{s3Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
                           <span className="text-lg font-black text-teal-200">{s3Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
                         </div>
