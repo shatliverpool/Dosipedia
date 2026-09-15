@@ -47,17 +47,12 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then((registration) => {
-          
-          // 1. สั่งตรวจสอบอัปเดตไฟล์ sw.js ทุกครั้งที่ผู้ใช้เข้าเว็บ
           registration.update();
-
-          // 2. ถ้าเจอ Service Worker ตัวใหม่กำลังติดตั้ง
           registration.onupdatefound = () => {
             const installingWorker = registration.installing;
             installingWorker.onstatechange = () => {
               if (installingWorker.state === 'installed') {
                 if (navigator.serviceWorker.controller) {
-                  // ส่งสัญญาณบอก sw.js ให้สลับไปใช้เวอร์ชันใหม่ทันที
                   installingWorker.postMessage({ action: 'skipWaiting' });
                 }
               }
@@ -65,7 +60,6 @@
           };
         }).catch(err => console.error('Service Worker Registration Failed!', err));
 
-        // 3. เมื่อ Service Worker เวอร์ชันใหม่เริ่มทำงาน สั่ง Reload หน้าเว็บ 1 ครั้งอัตโนมัติ
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (!refreshing) {
@@ -93,7 +87,7 @@
           { title: "1. IV", min: 0.01, max: 0.03, unit: "mg/dose" },
           { title: "2. Continuous infusion", min: 0.1, max: 1, unit: "mcg/min" }
         ],
-        info: "Resuscitation และ Severe Bradycardia\n⏩IV: 0.01-0.03 mg/kg (10-30 mcg/kg) = 0.1-0.3 ml/kg ของ adrenaline ความเข้มข้น 1:10,000  Saline flush: 0.5 ถึง 1 mL ทันทีหลังให้ยา\nอาจให้ทางท่อช่วยหายใจ โดยใช้ขนาดยาที่สูงกว่า ได้ถึง 0.1 mg/kg (100 mcg/kg) แล้วตามด้วย NSS 1 ml ทางท่อช่วยหายใจ ห้ามให้ยาขนาดสูงนี้ทางเส้นเลือดดำ\n⏩IV continuous infusion: เริ่มต้น 0.1 mcg/kg/min และปรับยาตาม response (Maximum 1 mcg/kg/min)\n⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 100 mcg/ml\n⏩ควรแก้ไขภาวะเลือดเป็นกรดก่อนการให้ยา adrenaline เพื่อให้ยาออกฤทธิ์ได้อย่างมีประสิทธิภาพมากขึ้น" 
+        info: "Resuscitation และ Severe Bradycardia\n⏩IV: 0.01-0.03 mg/kg (10-30 mcg/kg) = 0.1-0.3 ml/kg ของ adrenaline ความเข้มข้น 1:10,000 Saline flush: 0.5 ถึง 1 mL ทันทีหลังให้ยา\nอาจให้ทางท่อช่วยหายใจ โดยใช้ขนาดยาที่สูงกว่า ได้ถึง 0.1 mg/kg (100 mcg/kg) แล้วตามด้วย NSS 1 ml ทางท่อช่วยหายใจ ห้ามให้ยาขนาดสูงนี้ทางเส้นเลือดดำ\n⏩IV continuous infusion: เริ่มต้น 0.1 mcg/kg/min และปรับยาตาม response (Maximum 1 mcg/kg/min)\n⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 100 mcg/ml\n⏩ควรแก้ไขภาวะเลือดเป็นกรดก่อนการให้ยา adrenaline เพื่อให้ยาออกฤทธิ์ได้อย่างมีประสิทธิภาพมากขึ้น" 
       },
       { 
         name: "Aminopylline 250 mg/10ml", 
@@ -116,7 +110,7 @@
         info: "Early Hypocalcemia, Symptomatic (eg, seizures)\n⏩Initial treatment: 100-200 mg/kg/dose (1-2 mL/kg/dose) maximum 2000 mg/dose\n⏩Maintenance treatment: 200-800 mg/kg/day (2-8 mL/kg/day) IV infusion นาน 3 ถึง 5 วัน\n⏩การบริหารยา: 30-60 นาที \n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 10-20 mg/ml\n⏩หากเลี่ยงได้ ไม่แนะนำให้ผสมกับ NSS เนื่องจาก sodium ทำให้ calcium ขับออกเร็วขึ้น\n⏩หยุดให้ยาถ้าอัตราการเต้นของหัวใจเต้นช้ามากกว่า 100 ครั้ง/นาที"
       },
       { name: "cisatracurium inj. (nimbex) 10 mg/5 ml", min: 1, max: 3, unit: "mcg/min", info: "⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.1-0.4 mg/ml" },
-      { name: "doBUtamin 250 mg/20ml", min: 2, max: 25, unit: "mcg/min", info: "⏩ห้าม IV push ควรให้ทางเส้นเลือดดำใหญ่ๆ \nHypoperfusion and Hypotension:\n⏩continuous IV infusion 2-25 mcg/kg/minute \n⏩Max Conc : 2 mg/ml" },
+      { name: "doBUtamin 250 mg/20ml", min: 2, max: 25, unit: "mcg/min", info: "⏩ห้าม IV push ควรให้ทางเส้นเลือดดำใหญ่ๆ \nHypoperfusion and Hypotension:\n⏩continuous IV infusion 2-25 mcg/kg/min\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา < 5 mg/ml" },
       { name: "doPAmine 250 mg/10ml", min: 2, max: 20, unit: "mcg/min", info: "⏩ควรให้ทางเส้นเลือดดำใหญ่ๆ \n⏩continuous IV infusion 2-20 mcg/kg/minute \n⏩Max Conc : 1.6 mg/ml" },
       { 
         name: "Fentanyl 50 mcg/ml", 
@@ -135,7 +129,16 @@
           { title: "1. Bolus", min: 75, max: 75, unit: "unit/dose" },
           { title: "2. Maintenance", min: 28, max: 28, unit: "unit/hr" }
         ],
-        info: "⏩การรักษาภาวะลิ่มเลือดอุดตัน (Treatment of thrombosis)\n-75 units/kg IV นาน 10 นาที\n-Maintenance : 28 units/kg/hour\n⏩การติดตามและปรับขนาดยา:\n-วัดค่า aPTT หลังเริ่มให้ยาไปแล้ว 4 ชั่วโมง\n-ปรับขนาดยาเพื่อให้ค่า aPTT สอดคล้องกับระดับ Anti-factor Xa 0.35-0.7 (aPTT 60-85 วินาที)\n⏩ความเข้มข้นที่ใช้: ระวังเรื่องความเข้มข้นของยาที่ใช้ \nLoading dose: 100-500 units/mL\nContinuous IV infusion: 10-500 units/mL\n⏩วิธีผสม : Heparin 0.1 ml + D5W/NSS 4.9 ml = 100 unit/ml\n⏩Heparin 100 unit + NSS up to 1 ml flush double lumen  8 hr\n⏩ควรจำกัดระยะเวลาการรักษาเพียง 10-14 วัน"
+        info: "⏩การรักษาภาวะลิ่มเลือดอุดตัน (Treatment of thrombosis)\n-75 units/kg IV นาน 10 นาที\n-Maintenance : 28 units/kg/hour\n⏩การติดตามและปรับขนาดยา:\n-วัดค่า aPTT หลังเริ่มให้ยาไปแล้ว 4 ชั่วโมง\n-ปรับขนาดยาเพื่อให้ค่า aPTT สอดคล้องกับระดับ Anti-factor Xa 0.35-0.7 (aPTT 60-85 วินาที)\n⏩ความเข้มข้นที่ใช้: ระวังเรื่องความเข้มข้นของยาที่ใช้ \nLoading dose: 100-500 units/mL\nContinuous IV infusion: 10-500 units/mL\n⏩วิธีผสม : Heparin 0.1 ml + D5W/NSS 4.9 ml = 100 unit/ml\n⏩Heparin 100 unit + NSS up to 1 ml flush double lumen 8 hr\n⏩ควรจำกัดระยะเวลาการรักษาเพียง 10-14 วัน"
+      },
+      { 
+        name: "LEVETIRACETAM inj 500 mg/5 mL",
+        hasMultipleChannels: true,
+        channels: [
+          { title: "1. Loading dose", min: 20, max: 150, unit: "mg/day" },
+          { title: "2. Maintenance infusion", min: 41.7, max: 65, unit: "mg/day" }
+        ],
+        info: "⏩IV > 15 min\n⏩Maintenance infusion แบ่งให้ยา q 12 hr\n⏩เจือจางยาให้มีความเข้มข้น 5-15 mg/mL"
       },
       { name: "Lidocaine 2 % Vial (400 mg/20 ml)", min: 10, max: 50, unit: "mcg/min", info: "⏩Anti arrhythmia :\nInitial bolus dose: 0.5-1 mg/kg IV push 5 นาที ซ้ำได้ทุก 10 นาที\nขนาดยาสะสมสูงสุด (Maximum total bolus dose): ไม่เกิน 5 mg/kg\nMaintenance IV infusion: 10-50 mcg/kg/min\n⏩concentration\nIV push: 1-20 mg/mL\nContinuous infusion 0.8 ถึง 8 mg/mL" },
       { 
@@ -147,7 +150,7 @@
         altMin: 0.05, 
         altMax: 0.1, 
         altUnit: "ml/dose",
-        info: "⏩Hypomagnesemia 25-50 mg/kg ให้แบบ IV infusion 30-60 นาที (torsades with pulses 10-20 นาที,  pulseless torsades rapid infusion)\n⏩concentration 100-200 mg/mL" 
+        info: "⏩Hypomagnesemia 25-50 mg/kg ให้แบบ IV infusion 30-60 นาที (torsades with pulses 10-20 นาที, pulseless torsades rapid infusion)\n⏩concentration 100-200 mg/mL" 
       },
       { 
         name: "Midazolam 5mg/ml", 
@@ -179,9 +182,9 @@
         info: "⏩Sedation, pain:\n- IV : 0.05-0.2 mg/kg/dose IV, IM, subQ ทุก 4 ชั่วโมง\n- Continuous infusion : Loading : 100-150 mcg/kg over 1 hr Then 10 - 20 mg/kg/hr \n⏩administer over 15-30 min\n\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.1 - 5 mg/ml\n⏩วิธีผสม 0.1 ml+D5W/NSS 0.9 ml = 0.1 mg/ml" 
       },
       { name: "Nicardipine 10mg/10ml", min: 0.5, max: 2, unit: "mcg/min", info: "⏩Initial dose: 0.5 mcg/kg/min ให้แบบ continuous IV infusion\n⏩Maintenance dose: 0.5-2 mcg/kg/min\n⏩การเตรียมยา: ความเข้มข้น 0.1 mg/mL" },
-      { name: "Norepinephrine 4 mg/4ml", min: 0.05, max: 0.1, unit: "mcg/min", info: "⏩Septic Shock GA > 35 สัปดาห์:\ncontinuous infusion : 0.05-0.1 mcg/kg/min\nขนาดยาสูงสุดที่ให้ได้ : 2 mcg/kg/min\n⏩วิธีผสม 1 ml+D5W 9 ml = 0.1 mg/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา < 0.15 mg/ml\n⏩ไม่แนะนำให้ใช้ NSS:  สูญเสียตัวยาจากปฎิกิริยา oxidation\n⏩แนะนำให้ทาง Central line เนื่องจากช่วยลดความเสี่ยงในการเกิดsevere vasoconstriction และ ischemia" },
+      { name: "Norepinephrine 4 mg/4ml", min: 0.05, max: 0.1, unit: "mcg/min", info: "⏩Septic Shock GA > 35 สัปดาห์:\ncontinuous infusion : 0.05-0.1 mcg/kg/min\nขนาดยาสูงสุดที่ให้ได้ : 2 mcg/kg/min\n⏩วิธีผสม 1 ml+D5W 9 ml = 0.1 mg/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา < 0.15 mg/ml\n⏩ไม่แนะนำให้ใช้ NSS: สูญเสียตัวยาจากปฎิกิริยา oxidation\n⏩แนะนำให้ทาง Central line เนื่องจากช่วยลดความเสี่ยงในการเกิดsevere vasoconstriction และ ischemia" },
       { 
-        name: "PHENOBARB  INJ. 200 mg (1 ml.)",
+        name: "PHENOBARB INJ. 200 mg (1 ml.)",
         hasMultipleChannels: true,
         channels: [
           { title: "1. Loading dose", min: 20, max: 20, unit: "mg/dose" },
@@ -196,7 +199,7 @@
           { title: "1. Loading dose", min: 15, max: 20, unit: "mg/dose" },
           { title: "2. Maintenance", min: 4, max: 8, unit: "mg/day" }
         ],
-        info: "⏩Loading dose: 15-20 mg/kg IV >30 mins\n⏩Maintenance dose: 4-8 mg/kg q 24 hr IV drip in 30-60 min\n⏩Max rate : 0.5 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 1-5 mg/ml\n⏩ห้ามใช้ D5W ยาจะตกตะกอน\n⏩ควรล้างสายด้วยน้ำเกลือก่อนและหลังให้ยา\n⏩มักไม่คงตัวในสารละลายต่างๆ ที่ให้ทางหลอดเลือดดำ ควรหลีกเลี่ยงการให้ยาทางเส้นเลือดดำใหญ่ (central line) เนื่องจากจะเพิ่มความเสี่ยงการตกตะกอน" 
+        info: "⏩Loading dose: 15-20 mg/kg IV >30 mins\n⏩Maintenance dose: 4-8 mg/kg q 24 hr IV drip in 30-60 min (Neofax) 5-10 mg/kg/day (UptoDate)\n⏩ทารกอายุมากกว่า 1 สัปดาห์ อาจให้ 8 mg/kg/dose ทุก 8-12 ชั่วโมง\n⏩Max rate : 0.5 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 1-5 mg/ml\n⏩ห้ามใช้ D5W ยาจะตกตะกอน\n⏩ควรล้างสายด้วยน้ำเกลือก่อนและหลังให้ยา\n⏩มักไม่คงตัวในสารละลายต่างๆ ที่ให้ทางหลอดเลือดดำ ควรหลีกเลี่ยงการให้ยาทางเส้นเลือดดำใหญ่ (central line) เนื่องจากจะเพิ่มความเสี่ยงการตกตะกอน" 
       },
       { name: "Potassium chloride(KCl) 20 mEq/10ml", min: 0.5, max: 1, unit: "mEq/hr over 1 hour", info: "⏩Acute treatment of symptomatic hypokalemia: 0.5-1 mEq/kg IV over 1 ชั่วโมง \n⏩Maximum infusion rate 1 mEq/kg/hour [central line only] (with cardiac monitor) \n⏩maximum concentration \n\tperipheral infusion 40 mEq\n\tcentral line 80 mEq\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2 mEq/ml\n⏩หากเลี่ยงได้ ไม่แนะนำสารละลายที่มีน้ำตาล เนื่องจากจะลดระดับ serum potassium" },
       { name: "Regular Insulin 100unit/ml", min: 0.01, max: 0.1, unit: "unit/hr", info: "⏩Hyperglycemia\nContinuous IV infusion: 0.01-0.1 unit/kg/hour\nIntermittent dose: 0.1-0.2 unit/kg subQ ทุก 6-12 ชั่วโมง\n⏩Hyperkalemia\nInitial: 0.1-0.2 units/kg/hour ร่วมกับ Dextrose 0.5 g/kg/hour continuous IV infusion\n\n⏩วิธีผสม 0.1 ml+SWFI 0.9 ml = 10unit/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2-5 unnit/ml\n⏩ควรไล่สาย insulin ทิ้งไว้ประมาณ 20 นาทีก่อนจะให้ผู้ป่วย เพื่อให้ insulin เกาะที่สายเต็มที่ \n⏩การใช้ยาที่มีความเข้มข้นสูง และทิ้งระยะเวลารอนาน จะทำให้ลดเวลาในการให้ insulin \n⏩เพื่อให้ได้ steady-state ค่อยๆ ปรับยาตามระดับน้ำตาล" },
@@ -210,7 +213,7 @@
         altMin: 1.121, 
         altMax: 2.242, 
         altUnit: "ml/dose",
-        info: "⏩1-2 mEq/kg ทางหลอดเลือดดำช้าๆ อย่างน้อย 30 นาที\n⏩Infusion rate: over 30  mins\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.25 - 5 mEq/ml" 
+        info: "⏩1-2 mEq/kg ทางหลอดเลือดดำช้าๆ อย่างน้อย 30 นาที\n⏩Infusion rate: over 30 mins\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.25 - 5 mEq/ml" 
       },
       { name: "Spinorolactone syrup 10 mg/ml", min: 1, max: 3, unit: "mg/dose", info: "⏩Orally q 24 hr" }
     ].sort((a, b) => a.name.localeCompare(b.name));
@@ -219,10 +222,7 @@
       const [weight, setWeight] = useState('');
       const [selectedDrug, setSelectedDrug] = useState(DRUG_LIST[0]);
       
-      // ส่วนที่ 2: คำนวณหา Dose จาก drug (mg), sol (ml), rate (ml/hr)
       const [s2, setS2] = useState({ drug: '', sol: '', rate: '' });
-      
-      // ส่วนที่ 3: คำนวณหา Conc จาก rate (ml/hr), dose (mcg/kg/min หรือ mcg/kg/hr)
       const [s3, setS3] = useState({ rate: '', dose: '', doseHr: '' });
       
       const [feedback, setFeedback] = useState('');
@@ -230,6 +230,7 @@
       const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
       
       const [toast, setToast] = useState({ show: false, message: '', type: '' });
+      const [appVersion, setAppVersion] = useState('v1.0.0');
 
       const lastSentS2 = useRef("");
       const lastSentS3 = useRef("");
@@ -238,7 +239,20 @@
       const s3TimerRef = useRef(null);
       const weightTimerRef = useRef(null);
 
-      // ฟังก์ชันล้างข้อมูลทั้งหมดที่กรอกไว้
+      // ดึงเวอร์ชันจาก sw.js อัตโนมัติ
+      useEffect(() => {
+        fetch('/sw.js')
+          .then(res => res.text())
+          .then(text => {
+            const match = text.match(/CACHE_NAME\s*=\s*['"]([^'"]+)['"]/);
+            if (match && match[1]) {
+              const ver = match[1].replace(/^[a-zA-Z\-_]+/, '');
+              setAppVersion(ver.startsWith('v') ? ver : `v${ver}`);
+            }
+          })
+          .catch(err => console.log('Could not fetch SW version', err));
+      }, []);
+
       const handleClearAll = () => {
         setWeight('');
         setS2({ drug: '', sol: '', rate: '' });
@@ -336,7 +350,6 @@
         return { isMulti: false, min: mainMin, max: mainMax, unit: selectedDrug.unit, hasAlt: false, altMin: "0.00", altMax: "0.00" };
       }, [weight, selectedDrug]);
 
-      // ความเข้มข้นส่วนที่ 2
       const calculatedConcS2 = useMemo(() => {
         const pd = parseFloat(s2.drug);
         const ps = parseFloat(s2.sol);
@@ -346,7 +359,6 @@
         return "0.00";
       }, [s2.drug, s2.sol]);
 
-      // คำนวณส่วนที่ 2: หา Dose (mcg/kg/min & mcg/kg/hr) และ อัตราเร็วขนาดยา (mcg/min & mcg/hr)
       const s2Res = useMemo(() => {
         const pd = parseFloat(s2.drug);
         const ps = parseFloat(s2.sol);
@@ -371,7 +383,6 @@
         return { doseMin: "0.00", doseHr: "0.00", mcgMin: "0.00", mcgHr: "0.00" };
       }, [s2, weight, calculatedConcS2]);
 
-      // คำนวณส่วนที่ 3: หา Conc
       const s3Res = useMemo(() => {
         const pr = parseFloat(s3.rate), pw = parseFloat(weight);
         const pdoMin = parseFloat(s3.dose);
@@ -393,7 +404,6 @@
         return { conc: "0.00", mcgMin: "0.00", mcgHr: "0.00" };
       }, [s3, weight]);
 
-      // ⏱️ ส่งข้อมูลเมื่อ user ค้างข้อมูลไว้ 10 วินาที
       useEffect(() => {
         const pw = parseFloat(weight);
         if (weightTimerRef.current) clearTimeout(weightTimerRef.current);
@@ -524,7 +534,6 @@
             </div>
 
             <div className="flex items-center gap-2">
-              {/* ปุ่มล้างข้อมูล */}
               <button 
                 onClick={handleClearAll}
                 className="flex items-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-bold text-xs transition-colors border border-rose-200 active:scale-95"
@@ -843,14 +852,22 @@
             </main>
           </div>
 
-          <footer className="bg-white border-t border-slate-200 px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-3 shrink-0 z-10 shadow-inner">
+          <footer className="bg-white border-t border-slate-200 px-4 md:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-3 shrink-0 z-10 shadow-inner">
             <div className="text-center md:text-left">
               <p className="text-[11px] font-medium text-slate-700 tracking-tight">
-                Developed by Chartkawee Jehsaree &copy; <span className="text-slate-500 font-semibold ml-1">Version 1.0</span>
+                Developed by Chartkawee Jehsaree &copy; <span className="text-slate-500 font-semibold ml-1">{appVersion}</span>
               </p>
             </div>
-            <div className="flex items-center gap-4 bg-slate-900 text-white px-4 md:px-5 py-2.5 rounded-xl shadow-lg">
-              <div className="bg-pink-500 p-2 rounded-lg shadow-md shadow-pink-500/20">
+
+            {/* ข้อความแจ้งเตือน CDSS ตรงกลาง */}
+            <div className="text-center max-w-xl mx-auto px-2">
+              <p className="text-[10px] md:text-[11px] font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg py-1 px-3 inline-block leading-tight">
+                ⚠️ <span className="font-bold">ข้อควรระวัง:</span> ระบบนี้เป็นเพียงเครื่องมือสนับสนุนการตัดสินใจทางคลินิก (Clinical Decision Support System: CDSS) ผลการคำนวณทั้งหมดต้องได้รับการตรวจสอบซ้ำก่อนใช้งานจริงเสมอ
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 bg-slate-900 text-white px-4 md:px-5 py-2 rounded-xl shadow-lg shrink-0">
+              <div className="bg-pink-500 p-1.5 rounded-lg shadow-md shadow-pink-500/20">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
