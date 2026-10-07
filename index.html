@@ -222,7 +222,8 @@
       const [weight, setWeight] = useState('');
       const [selectedDrug, setSelectedDrug] = useState(DRUG_LIST[0]);
       
-      const [s2, setS2] = useState({ drug: '', sol: '', rate: '' });
+      // เพิ่ม unit สลับหน่วย ตัวยา (mg หรือ mcg)
+      const [s2, setS2] = useState({ drug: '', drugUnit: 'mg', sol: '', rate: '' });
       const [s3, setS3] = useState({ rate: '', dose: '', doseHr: '' });
       
       const [feedback, setFeedback] = useState('');
@@ -240,7 +241,6 @@
       const weightTimerRef = useRef(null);
       const hasLoggedVisit = useRef(false);
 
-      // ดึงเวอร์ชันจาก sw.js อัตโนมัติ
       useEffect(() => {
         fetch('/sw.js')
           .then(res => res.text())
@@ -254,7 +254,6 @@
           .catch(err => console.log('Could not fetch SW version', err));
       }, []);
 
-      // บันทึกสถิติผู้เข้าใช้งาน (รายวันและยอดรวม) ครั้งเดียวเมื่อเปิดแอป
       useEffect(() => {
         if (!hasLoggedVisit.current) {
           hasLoggedVisit.current = true;
@@ -271,7 +270,7 @@
 
       const handleClearAll = () => {
         setWeight('');
-        setS2({ drug: '', sol: '', rate: '' });
+        setS2({ drug: '', drugUnit: 'mg', sol: '', rate: '' });
         setS3({ rate: '', dose: '', doseHr: '' });
         showNotification('ล้างข้อมูลเรียบร้อยแล้ว');
       };
@@ -366,37 +365,42 @@
         return { isMulti: false, min: mainMin, max: mainMax, unit: selectedDrug.unit, hasAlt: false, altMin: "0.00", altMax: "0.00" };
       }, [weight, selectedDrug]);
 
+      // คำนวณความเข้มข้นส่วนที่ 2 (แปลงค่าเป็น mg ก่อน ถ้าเลือกหน่วย mcg)
       const calculatedConcS2 = useMemo(() => {
-        const pd = parseFloat(s2.drug);
+        const rawDrug = parseFloat(s2.drug);
         const ps = parseFloat(s2.sol);
-        if (pd > 0 && ps > 0) {
-          return (pd / ps).toFixed(2);
+        if (rawDrug > 0 && ps > 0) {
+          const drugMg = s2.drugUnit === 'mcg' ? rawDrug / 1000 : rawDrug;
+          return (drugMg / ps).toFixed(4); // รองรับทศนิยมละเอียดขึ้น
         }
-        return "0.00";
-      }, [s2.drug, s2.sol]);
+        return "0.0000";
+      }, [s2.drug, s2.drugUnit, s2.sol]);
 
+      // คำนวณส่วนที่ 2 รองรับทศนิยมละเอียด
       const s2Res = useMemo(() => {
-        const pd = parseFloat(s2.drug);
+        const rawDrug = parseFloat(s2.drug);
         const ps = parseFloat(s2.sol);
         const pr = parseFloat(s2.rate);
         const pw = parseFloat(weight);
-        const conc = parseFloat(calculatedConcS2);
+        const concMgMl = parseFloat(calculatedConcS2); // mg/ml
 
-        if (conc > 0 && pr > 0 && pw > 0) {
-          const doseMin = (pr * conc * 1000) / (60 * pw);
-          const doseHr = (pr * conc * 1000) / pw;
-          
-          const mcgMin = (pr * conc * 1000) / 60;
-          const mcgHr = pr * conc * 1000;
+        if (concMgMl > 0 && pr > 0 && pw > 0) {
+          // คำนวณแบบละเอียดยิบ (รองรับทศนิยม)
+          const totalMgPerHour = pr * concMgMl;
+          const totalMcgPerHour = totalMgPerHour * 1000;
+          const totalMcgPerMin = totalMcgPerHour / 60;
+
+          const doseMin = totalMcgPerMin / pw; // mcg/kg/min
+          const doseHr = totalMcgPerHour / pw;  // mcg/kg/hr
 
           return {
-            doseMin: doseMin.toFixed(2),
-            doseHr: doseHr.toFixed(2),
-            mcgMin: mcgMin.toFixed(2),
-            mcgHr: mcgHr.toFixed(2)
+            doseMin: doseMin.toFixed(3),
+            doseHr: doseHr.toFixed(3),
+            mcgMin: totalMcgPerMin.toFixed(3),
+            mcgHr: totalMcgPerHour.toFixed(3)
           };
         }
-        return { doseMin: "0.00", doseHr: "0.00", mcgMin: "0.00", mcgHr: "0.00" };
+        return { doseMin: "0.000", doseHr: "0.000", mcgMin: "0.000", mcgHr: "0.000" };
       }, [s2, weight, calculatedConcS2]);
 
       const s3Res = useMemo(() => {
@@ -409,15 +413,15 @@
             const conc = ((pw * pdoMin * 60) / (1000 * pr));
             const mcgMin = (pr * conc * 1000) / 60;
             const mcgHr = pr * conc * 1000;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2) };
+            return { conc: conc.toFixed(4), mcgMin: mcgMin.toFixed(3), mcgHr: mcgHr.toFixed(3) };
           } else if (pdoHr > 0) {
             const conc = ((pw * pdoHr) / (1000 * pr));
             const mcgMin = (pr * conc * 1000) / 60;
             const mcgHr = pr * conc * 1000;
-            return { conc: conc.toFixed(2), mcgMin: mcgMin.toFixed(2), mcgHr: mcgHr.toFixed(2) };
+            return { conc: conc.toFixed(4), mcgMin: mcgMin.toFixed(3), mcgHr: mcgHr.toFixed(3) };
           }
         }
-        return { conc: "0.00", mcgMin: "0.00", mcgHr: "0.00" };
+        return { conc: "0.0000", mcgMin: "0.000", mcgHr: "0.000" };
       }, [s3, weight]);
 
       useEffect(() => {
@@ -455,7 +459,7 @@
         if (s2TimerRef.current) clearTimeout(s2TimerRef.current);
 
         if (pd > 0 && ps > 0 && pr > 0 && pw > 0) {
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Drug:${pd}mg, Sol:${ps}ml, Rate:${pr}ml/hr, Wt:${pw}kg => Dose:${s2Res.doseMin} mcg/kg/min (${s2Res.doseHr} mcg/kg/hr), RateDose:${s2Res.mcgMin} mcg/min (${s2Res.mcgHr} mcg/hr)`;
+          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Drug:${pd} ${s2.drugUnit}, Sol:${ps}ml, Rate:${pr}ml/hr, Wt:${pw}kg => Dose:${s2Res.doseMin} mcg/kg/min (${s2Res.doseHr} mcg/kg/hr)`;
           
           s2TimerRef.current = setTimeout(() => {
             if (lastSentS2.current !== logMsg) {
@@ -486,7 +490,7 @@
 
         if (pr > 0 && pw > 0 && (pdoMin > 0 || pdoHr > 0)) {
           const activeDose = pdoMin > 0 ? `${pdoMin} mcg/kg/min` : `${pdoHr} mcg/kg/hr`;
-          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Rate:${pr}ml/hr, Dose:${activeDose}, Wt:${pw}kg => Conc:${s3Res.conc} mg/ml (${s3Res.mcgMin} mcg/min, ${s3Res.mcgHr} mcg/hr)`;
+          const logMsg = `[ชื่อยา: ${selectedDrug.name}] Rate:${pr}ml/hr, Dose:${activeDose}, Wt:${pw}kg => Conc:${s3Res.conc} mg/ml`;
           
           s3TimerRef.current = setTimeout(() => {
             if (lastSentS3.current !== logMsg) {
@@ -733,7 +737,7 @@
                   <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-100">
                     <div className="bg-blue-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider flex justify-between items-center">
                       <span>2. คำนวณหา dose ยา</span>
-                      {calculatedConcS2 !== "0.00" && (
+                      {calculatedConcS2 !== "0.0000" && (
                         <span className="bg-blue-700 text-white px-2.5 py-0.5 rounded-lg text-[10px] font-black">
                           ความเข้มข้น: {calculatedConcS2} mg/ml
                         </span>
@@ -743,13 +747,23 @@
                     <div className="p-6">
                       <div className="grid grid-cols-3 gap-3 mb-6">
                         <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">ตัวยา (mg)</label>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase">ตัวยา</label>
+                            <select 
+                              value={s2.drugUnit} 
+                              onChange={e => setS2({...s2, drugUnit: e.target.value})}
+                              className="text-[10px] font-bold bg-slate-200 text-slate-700 rounded px-1 outline-none cursor-pointer"
+                            >
+                              <option value="mg">mg</option>
+                              <option value="mcg">mcg</option>
+                            </select>
+                          </div>
                           <input 
                             type="number" 
                             value={s2.drug} 
                             onChange={e=>setS2({...s2, drug:e.target.value})} 
                             className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-center font-extrabold text-slate-700 focus:border-blue-500 focus:bg-white outline-none" 
-                            placeholder="mg"
+                            placeholder={s2.drugUnit}
                             step="any"
                           />
                         </div>
@@ -881,7 +895,6 @@
               </p>
             </div>
 
-            {/* ข้อความแจ้งเตือน CDSS ตรงกลาง */}
             <div className="text-center max-w-xl mx-auto px-2">
               <p className="text-[10px] md:text-[11px] font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg py-1 px-3 inline-block leading-tight">
                 ⚠️ <span className="font-bold">ข้อควรระวัง:</span> ระบบนี้เป็นเพียงเครื่องมือสนับสนุนการตัดสินใจทางคลินิก (Clinical Decision Support System: CDSS) ผลการคำนวณทั้งหมดต้องได้รับการตรวจสอบซ้ำก่อนใช้งานจริงเสมอ
