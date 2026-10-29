@@ -240,7 +240,6 @@
       const [weight, setWeight] = useState('');
       const [selectedDrug, setSelectedDrug] = useState(DRUG_LIST[0]);
       
-      // มีตัวเลือกหน่วยแค่ 2 ตัวเหมือนเดิม (mg และ mcg)
       const [s2, setS2] = useState({ drug: '', drugUnit: 'mg', sol: '', rate: '' });
       const [s3, setS3] = useState({ rate: '', dose: '', doseHr: '' });
       
@@ -439,6 +438,7 @@
         return { conc: "0.0000", mcgMin: "0.000", mcgHr: "0.000" };
       }, [s3, weight]);
 
+      // ⏱️ 1. ส่งข้อมูลเข้า Google Sheet เมื่อผู้ใช้กรอกค้างไว้ 10 วินาที
       useEffect(() => {
         const pw = parseFloat(weight);
         if (weightTimerRef.current) clearTimeout(weightTimerRef.current);
@@ -527,6 +527,7 @@
         };
       }, [s3Res, s3, weight, selectedDrug]);
 
+      // 💬 2. ส่ง Feedback พร้อมแนบข้อมูลยาและค่าที่กำลังกรอกอยู่
       const handleSendFeedback = () => {
         if (feedback.trim()) {
           const feedbackPayload = {
