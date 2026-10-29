@@ -132,6 +132,20 @@
         info: "⏩การรักษาภาวะลิ่มเลือดอุดตัน (Treatment of thrombosis)\n-75 units/kg IV นาน 10 นาที\n-Maintenance : 28 units/kg/hour\n⏩การติดตามและปรับขนาดยา:\n-วัดค่า aPTT หลังเริ่มให้ยาไปแล้ว 4 ชั่วโมง\n-ปรับขนาดยาเพื่อให้ค่า aPTT สอดคล้องกับระดับ Anti-factor Xa 0.35-0.7 (aPTT 60-85 วินาที)\n⏩ความเข้มข้นที่ใช้: ระวังเรื่องความเข้มข้นของยาที่ใช้ \nLoading dose: 100-500 units/mL\nContinuous IV infusion: 10-500 units/mL\n⏩วิธีผสม : Heparin 0.1 ml + D5W/NSS 4.9 ml = 100 unit/ml\n⏩Heparin 100 unit + NSS up to 1 ml flush double lumen 8 hr\n⏩ควรจำกัดระยะเวลาการรักษาเพียง 10-14 วัน"
       },
       { 
+        name: "INSULIN-R HUMAN INJ 100 iu./ml", 
+        min: 0.01, 
+        max: 0.1, 
+        unit: "unit/hr", 
+        info: "⏩Hyperglycemia\nContinuous IV infusion: 0.01-0.1 unit/kg/hour\nIntermittent dose: 0.1-0.2 unit/kg subQ ทุก 6-12 ชั่วโมง\n⏩Hyperkalemia\nInitial: 0.1-0.2 units/kg/hour ร่วมกับ Dextrose 0.5 g/kg/hour continuous IV infusion\n\n⏩วิธีผสม 0.1 ml+SWFI 0.9 ml = 10unit/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2-5 unnit/ml\n⏩ควรไล่สาย insulin ทิ้งไว้ประมาณ 20 นาทีก่อนจะให้ผู้ป่วย เพื่อให้ insulin เกาะที่สายเต็มที่ \n⏩การใช้ยาที่มีความเข้มข้นสูง และทิ้งระยะเวลารอนาน จะทำให้ลดเวลาในการให้ insulin \n⏩เพื่อให้ได้ steady-state ค่อยๆ ปรับยาตามระดับน้ำตาล" 
+      },
+      { 
+        name: "KCL Inj. 20 mEq. Amphule (10 ml.)", 
+        min: 0.5, 
+        max: 1, 
+        unit: "mEq/hr over 1 hour", 
+        info: "⏩Acute treatment of symptomatic hypokalemia: 0.5-1 mEq/kg IV over 1 ชั่วโมง \n⏩Maximum infusion rate 1 mEq/kg/hour [central line only] (with cardiac monitor) \n⏩maximum concentration \n\tperipheral infusion 40 mEq\n\tcentral line 80 mEq\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2 mEq/ml\n⏩หากเลี่ยงได้ ไม่แนะนำสารละลายที่มีน้ำตาล เนื่องจากจะลดระดับ serum potassium" 
+      },
+      { 
         name: "LEVETIRACETAM inj 500 mg/5 mL",
         hasMultipleChannels: true,
         channels: [
@@ -190,7 +204,7 @@
           { title: "1. Loading dose", min: 20, max: 20, unit: "mg/dose" },
           { title: "2. Maintenance", min: 3, max: 5, unit: "mg/day" }
         ],
-        info: "⏩loading dose : 20 mg/kg IV 20 นาที ถ้าไม่หยุดชัก เพิ่มได้อีก 5 mg/kg (สูงสุด 40 mg/kg)\n⏩Maintainance dose : 3-5 mg/kg/day หลังloading dose 12-24 ชั่วโมง ความถี่ให้วันละครั้ง ทางหลอดเลือดดำช้าๆ \n⏩Max rate : 1 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)\n\n⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 20 mg/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 10 mg/ml"
+        info: "loading dose : 20 mg/kg IV 20 นาที ถ้าไม่หยุดชัก เพิ่มได้อีก 5 mg/kg (สูงสุด 40 mg/kg)\n⏩Maintainance dose : 3-5 mg/kg/day หลังloading dose 12-24 ชั่วโมง ความถี่ให้วันละครั้ง ทางหลอดเลือดดำช้าๆ \n⏩Max rate : 1 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)\n\n⏩วิธีผสม 1 ml+D5W/NSS 9 ml = 20 mg/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 10 mg/ml"
       },
       { 
         name: "Phenytoin 250 mg/5 ml", 
@@ -201,8 +215,6 @@
         ],
         info: "⏩Loading dose: 15-20 mg/kg IV >30 mins\n⏩Maintenance dose: 4-8 mg/kg q 24 hr IV drip in 30-60 min (Neofax) 5-10 mg/kg/day (UptoDate)\n⏩ทารกอายุมากกว่า 1 สัปดาห์ อาจให้ 8 mg/kg/dose ทุก 8-12 ชั่วโมง\n⏩Max rate : 0.5 mg/kg/min (สังเกตอาการหัวใจเต้นช้า)\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 1-5 mg/ml\n⏩ห้ามใช้ D5W ยาจะตกตะกอน\n⏩ควรล้างสายด้วยน้ำเกลือก่อนและหลังให้ยา\n⏩มักไม่คงตัวในสารละลายต่างๆ ที่ให้ทางหลอดเลือดดำ ควรหลีกเลี่ยงการให้ยาทางเส้นเลือดดำใหญ่ (central line) เนื่องจากจะเพิ่มความเสี่ยงการตกตะกอน" 
       },
-      { name: "Potassium chloride(KCl) 20 mEq/10ml", min: 0.5, max: 1, unit: "mEq/hr over 1 hour", info: "⏩Acute treatment of symptomatic hypokalemia: 0.5-1 mEq/kg IV over 1 ชั่วโมง \n⏩Maximum infusion rate 1 mEq/kg/hour [central line only] (with cardiac monitor) \n⏩maximum concentration \n\tperipheral infusion 40 mEq\n\tcentral line 80 mEq\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2 mEq/ml\n⏩หากเลี่ยงได้ ไม่แนะนำสารละลายที่มีน้ำตาล เนื่องจากจะลดระดับ serum potassium" },
-      { name: "Regular Insulin 100unit/ml", min: 0.01, max: 0.1, unit: "unit/hr", info: "⏩Hyperglycemia\nContinuous IV infusion: 0.01-0.1 unit/kg/hour\nIntermittent dose: 0.1-0.2 unit/kg subQ ทุก 6-12 ชั่วโมง\n⏩Hyperkalemia\nInitial: 0.1-0.2 units/kg/hour ร่วมกับ Dextrose 0.5 g/kg/hour continuous IV infusion\n\n⏩วิธีผสม 0.1 ml+SWFI 0.9 ml = 10unit/ml\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.2-5 unnit/ml\n⏩ควรไล่สาย insulin ทิ้งไว้ประมาณ 20 นาทีก่อนจะให้ผู้ป่วย เพื่อให้ insulin เกาะที่สายเต็มที่ \n⏩การใช้ยาที่มีความเข้มข้นสูง และทิ้งระยะเวลารอนาน จะทำให้ลดเวลาในการให้ insulin \n⏩เพื่อให้ได้ steady-state ค่อยๆ ปรับยาตามระดับน้ำตาล" },
       { name: "Sildenafil syrup 5 mg/ml", min: 0.5, max: 1, unit: "mg/dose", info: "⏩Persistent Pulmonary Hypertension : orally 3 times daily" },
       { 
         name: "Sodium Bicarb (NaHCO3) (44.6 meq/50 ml) 7.5%", 
@@ -215,14 +227,20 @@
         altUnit: "ml/dose",
         info: "⏩1-2 mEq/kg ทางหลอดเลือดดำช้าๆ อย่างน้อย 30 นาที\n⏩Infusion rate: over 30 mins\n⏩ความเข้มข้นสุดท้ายก่อนให้ยา 0.25 - 5 mEq/ml" 
       },
-      { name: "Spinorolactone syrup 10 mg/ml", min: 1, max: 3, unit: "mg/dose", info: "⏩Orally q 24 hr" }
+      { 
+        name: "Spinorolactone syrup 10 mg/ml", 
+        min: 1, 
+        max: 3, 
+        unit: "mg/dose (ml/dose)", 
+        info: "⏩Orally q 24 hr" 
+      }
     ].sort((a, b) => a.name.localeCompare(b.name));
 
     const App = () => {
       const [weight, setWeight] = useState('');
       const [selectedDrug, setSelectedDrug] = useState(DRUG_LIST[0]);
       
-      // เพิ่ม unit สลับหน่วย ตัวยา (mg หรือ mcg)
+      // มีตัวเลือกหน่วยแค่ 2 ตัวเหมือนเดิม (mg และ mcg)
       const [s2, setS2] = useState({ drug: '', drugUnit: 'mg', sol: '', rate: '' });
       const [s3, setS3] = useState({ rate: '', dose: '', doseHr: '' });
       
@@ -365,33 +383,30 @@
         return { isMulti: false, min: mainMin, max: mainMax, unit: selectedDrug.unit, hasAlt: false, altMin: "0.00", altMax: "0.00" };
       }, [weight, selectedDrug]);
 
-      // คำนวณความเข้มข้นส่วนที่ 2 (แปลงค่าเป็น mg ก่อน ถ้าเลือกหน่วย mcg)
       const calculatedConcS2 = useMemo(() => {
         const rawDrug = parseFloat(s2.drug);
         const ps = parseFloat(s2.sol);
         if (rawDrug > 0 && ps > 0) {
           const drugMg = s2.drugUnit === 'mcg' ? rawDrug / 1000 : rawDrug;
-          return (drugMg / ps).toFixed(4); // รองรับทศนิยมละเอียดขึ้น
+          return (drugMg / ps).toFixed(4);
         }
         return "0.0000";
       }, [s2.drug, s2.drugUnit, s2.sol]);
 
-      // คำนวณส่วนที่ 2 รองรับทศนิยมละเอียด
       const s2Res = useMemo(() => {
         const rawDrug = parseFloat(s2.drug);
         const ps = parseFloat(s2.sol);
         const pr = parseFloat(s2.rate);
         const pw = parseFloat(weight);
-        const concMgMl = parseFloat(calculatedConcS2); // mg/ml
+        const concMgMl = parseFloat(calculatedConcS2);
 
         if (concMgMl > 0 && pr > 0 && pw > 0) {
-          // คำนวณแบบละเอียดยิบ (รองรับทศนิยม)
           const totalMgPerHour = pr * concMgMl;
           const totalMcgPerHour = totalMgPerHour * 1000;
           const totalMcgPerMin = totalMcgPerHour / 60;
 
-          const doseMin = totalMcgPerMin / pw; // mcg/kg/min
-          const doseHr = totalMcgPerHour / pw;  // mcg/kg/hr
+          const doseMin = totalMcgPerMin / pw;
+          const doseHr = totalMcgPerHour / pw;
 
           return {
             doseMin: doseMin.toFixed(3),
@@ -514,20 +529,41 @@
 
       const handleSendFeedback = () => {
         if (feedback.trim()) {
+          const feedbackPayload = {
+            text: feedback,
+            drug: selectedDrug.name,
+            weight: weight || "-",
+            inputs: {
+              s2_drug: `${s2.drug || '-'} ${s2.drugUnit}`,
+              s2_sol: `${s2.sol || '-'} ml`,
+              s2_rate: `${s2.rate || '-'} ml/hr`,
+              s3_rate: `${s3.rate || '-'} ml/hr`,
+              s3_doseMin: `${s3.dose || '-'} mcg/kg/min`,
+              s3_doseHr: `${s3.doseHr || '-'} mcg/kg/hr`
+            },
+            calculatedResults: {
+              s2_mcgMin: `${s2Res.mcgMin} mcg/min`,
+              s2_mcgHr: `${s2Res.mcgHr} mcg/hr`,
+              s3_conc: `${s3Res.conc} mg/ml`,
+              s3_mcgMin: `${s3Res.mcgMin} mcg/min`,
+              s3_mcgHr: `${s3Res.mcgHr} mcg/hr`
+            }
+          };
+
           if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "YOUR_GAS_WEB_APP_URL_HERE") {
             fetch(GAS_WEB_APP_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: "saveFeedback", payload: { text: feedback } }),
+              body: JSON.stringify({ action: "saveFeedback", payload: feedbackPayload }),
               redirect: 'follow'
             }).catch(err => console.error("Feedback API Error:", err));
           }
 
           if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run.saveFeedback(feedback);
+            google.script.run.saveFeedback(feedbackPayload);
           }
           setFeedback('');
-          showNotification('ส่งข้อเสนอแนะเรียบร้อยแล้ว ขอบพระคุณมากครับ');
+          showNotification('ส่งข้อเสนอแนะพร้อมข้อมูลประกอบเรียบร้อยแล้ว ขอบพระคุณมากครับ');
         } else {
           showNotification('กรุณากรอกข้อความก่อนส่งครับ', 'error');
         }
@@ -657,7 +693,7 @@
                 {/* 1. คำนวณขนาดยาตามน้ำหนัก */}
                 <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col fade-in">
                   <div className="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-4 text-white font-bold flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                    <span className="text-xs sm:text-sm uppercase tracking-wider font-extrabold">1. คำนวณขนาดยาตามน้ำหนัก (Dose Range)</span>
+                    <span className="text-xs sm:text-sm uppercase tracking-wider font-extrabold">1. คำนวณขนาดยาตามน้ำหนัก (DOSE RANGE)</span>
                     <span className="text-[11px] bg-white/20 px-3 py-1 rounded-full text-white font-bold max-w-max">
                       {selectedDrug.name}
                     </span>
@@ -665,7 +701,7 @@
                   <div className="p-6 md:p-8 space-y-6 flex-1">
                     <div>
                       <label className="text-[11px] font-bold text-slate-400 uppercase mb-2 block ml-1 tracking-wider">
-                        น้ำหนักตัวผู้ป่วย (Weight - KG)
+                        น้ำหนักตัวผู้ป่วย (WEIGHT - KG)
                       </label>
                       <input 
                         type="number" 
@@ -678,13 +714,17 @@
                       />
                     </div>
                     
-                    <div className="bg-slate-900 text-white p-6 md:p-8 rounded-2xl text-center shadow-2xl relative overflow-hidden space-y-4">
+                    {/* 🔴 CROSS-CHECK จุดที่ 1 */}
+                    <div className="bg-slate-900 text-white p-6 md:p-8 rounded-2xl text-center shadow-2xl relative overflow-hidden space-y-4 border-4 border-red-500 shadow-red-500/20">
+                      <div className="absolute top-2 left-3 bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        🔍 CROSS-CHECK
+                      </div>
                       <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                         <img src={LOGO_URL} className="w-28 h-28 object-contain" alt="background logo" />
                       </div>
                       
                       {s1Res.isMulti ? (
-                        <div className="space-y-4">
+                        <div className="space-y-4 pt-2">
                           {s1Res.channels.map((ch, idx) => (
                             <div key={idx} className={`${idx > 0 ? 'border-t border-slate-800 pt-4' : ''}`}>
                               <div className="text-[11px] text-pink-300 font-extrabold uppercase mb-1 tracking-wider">{ch.title}</div>
@@ -702,10 +742,10 @@
                           ))}
                         </div>
                       ) : (
-                        <div>
-                          <div className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-widest">ช่วงขนาดยาที่แนะนำ (Main Dose Range)</div>
+                        <div className="pt-2">
+                          <div className="text-[10px] text-slate-300 font-bold uppercase mb-1 tracking-widest">ช่วงขนาดยาที่แนะนำ (MAIN DOSE RANGE)</div>
                           <div className="text-3xl md:text-4xl font-black tracking-tight text-white">{s1Res.min} - {s1Res.max}</div>
-                          <div className="text-[10px] text-pink-400 mt-1 uppercase font-extrabold tracking-widest bg-pink-950/40 px-3 py-1 rounded-full inline-block">
+                          <div className="text-[10px] text-rose-400 mt-1 uppercase font-extrabold tracking-widest bg-pink-950/40 px-3 py-1 rounded-full inline-block">
                             หน่วยยา: {s1Res.unit}
                           </div>
 
@@ -736,7 +776,7 @@
                   {/* 2. คำนวณหา dose ยา */}
                   <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-100">
                     <div className="bg-blue-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider flex justify-between items-center">
-                      <span>2. คำนวณหา dose ยา</span>
+                      <span>2. คำนวณหา DOSE ยา</span>
                       {calculatedConcS2 !== "0.0000" && (
                         <span className="bg-blue-700 text-white px-2.5 py-0.5 rounded-lg text-[10px] font-black">
                           ความเข้มข้น: {calculatedConcS2} mg/ml
@@ -768,7 +808,7 @@
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">สารละลาย (ml)</label>
+                          <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">สารละลาย (ML)</label>
                           <input 
                             type="number" 
                             value={s2.sol} 
@@ -779,7 +819,7 @@
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold text-blue-600 uppercase mb-1.5 block">อัตราการให้ยา (ml/hr)</label>
+                          <label className="text-[10px] font-bold text-blue-600 uppercase mb-1.5 block">อัตราการให้ยา (ML/HR)</label>
                           <input 
                             type="number" 
                             value={s2.rate} 
@@ -793,7 +833,7 @@
 
                       <div className="bg-slate-900 text-white p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-3 shadow-lg relative overflow-hidden">
                         <div className="flex flex-col space-y-1">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">Dose ยาที่คำนวณได้:</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-80">DOSE ที่คำนวณได้:</span>
                           <span className="text-2xl md:text-3xl font-black text-white">
                             {s2Res.doseMin} <span className="text-xs font-bold opacity-80">mcg/kg/min</span>
                           </span>
@@ -801,10 +841,15 @@
                             {s2Res.doseHr} <span className="text-xs font-bold opacity-80">mcg/kg/hr</span>
                           </span>
                         </div>
-                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5">
+                        
+                        {/* 🔴 CROSS-CHECK จุดที่ 2 */}
+                        <div className="border border-red-500 bg-red-950/30 p-2.5 rounded-xl flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5 relative">
+                          <span className="text-[9px] bg-red-500 text-white font-black px-1.5 py-0.5 rounded uppercase tracking-wider mb-0.5">
+                            🔍 CROSS-CHECK
+                          </span>
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ขนาดยา:</span>
-                          <span className="text-lg font-black text-blue-100">{s2Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
-                          <span className="text-lg font-black text-indigo-200">{s2Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
+                          <span className="text-lg font-black text-amber-300">{s2Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
+                          <span className="text-lg font-black text-amber-300">{s2Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
                         </div>
                       </div>
                     </div>
@@ -813,12 +858,12 @@
                   {/* 3. คำนวณหาความเข้มข้นของยา (Conc) */}
                   <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden fade-in animate-delay-200">
                     <div className="bg-emerald-600 px-5 py-3 text-white text-xs font-extrabold uppercase tracking-wider">
-                      3. คำนวณหาความเข้มข้นของยา (Conc. - mg/ml)
+                      3. คำนวณหาความเข้มข้นของยา (CONC. - MG/ML)
                     </div>
                     
                     <div className="p-6">
                       <div className="mb-4">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">อัตราการให้ยา (ml/hr)</label>
+                        <label className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 block">อัตราการให้ยา (ML/HR)</label>
                         <input 
                           type="number" 
                           value={s3.rate} 
@@ -831,7 +876,7 @@
 
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
-                          <label className="text-[10px] font-extrabold text-emerald-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/min)</label>
+                          <label className="text-[10px] font-extrabold text-emerald-600 uppercase mb-1.5 block text-center">DOSE (MCG/KG/MIN)</label>
                           <input 
                             type="number" 
                             value={s3.dose} 
@@ -842,7 +887,7 @@
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-extrabold text-teal-600 uppercase mb-1.5 block text-center">Dose (mcg/kg/hr)</label>
+                          <label className="text-[10px] font-extrabold text-teal-600 uppercase mb-1.5 block text-center">DOSE (MCG/KG/HR)</label>
                           <input 
                             type="number" 
                             value={s3.doseHr} 
@@ -859,10 +904,15 @@
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ความเข้มข้น:</span>
                           <span className="text-3xl font-black">{s3Res.conc} <span className="text-xs font-bold opacity-80">mg/ml</span></span>
                         </div>
-                        <div className="border-t md:border-t-0 md:border-l border-white/20 pt-2 md:pt-0 md:pl-4 flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5">
+
+                        {/* 🔴 CROSS-CHECK จุดที่ 3 */}
+                        <div className="border border-red-500 bg-red-950/30 p-2.5 rounded-xl flex flex-col w-full md:w-auto items-center md:items-end space-y-0.5 relative">
+                          <span className="text-[9px] bg-red-500 text-white font-black px-1.5 py-0.5 rounded uppercase tracking-wider mb-0.5">
+                            🔍 CROSS-CHECK
+                          </span>
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-80">ขนาดยา:</span>
-                          <span className="text-lg font-black text-emerald-100">{s3Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
-                          <span className="text-lg font-black text-teal-200">{s3Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
+                          <span className="text-lg font-black text-amber-300">{s3Res.mcgMin} <span className="text-xs font-bold opacity-80">mcg/min</span></span>
+                          <span className="text-lg font-black text-amber-300">{s3Res.mcgHr} <span className="text-xs font-bold opacity-80">mcg/hr</span></span>
                         </div>
                       </div>
                     </div>
@@ -874,7 +924,7 @@
                       value={feedback} 
                       onChange={e=>setFeedback(e.target.value)} 
                       className="w-full p-4 bg-slate-50 rounded-2xl text-sm h-20 border border-slate-200 focus:border-slate-400 focus:bg-white outline-none transition-all resize-none font-medium text-slate-600" 
-                      placeholder="เขียนรายละเอียดข้อเสนอแนะหรือปัญหาที่นี่..." 
+                      placeholder="เขียนข้อเสนอแนะหรือแจ้งปัญหาการใช้งานที่นี่" 
                     />
                     <button 
                       onClick={handleSendFeedback} 
