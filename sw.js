@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dosipedia-v1.0.5';
+const CACHE_NAME = 'dosipedia-v1.3.0';
 const urlsToCache = [
   '/',
   '/index.html',
